@@ -1,0 +1,6 @@
+Duplicated file found; will not be sent for synthesis: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4/bd_0/ip/ip_3/hdl/lmb_v10_v3_0_vh_rfs.vhd
+Duplicated file found; will not be sent for synthesis: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4/bd_0/ip/ip_5/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd
+Duplicated file found; will not be sent for synthesis: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4/bd_0/ip/ip_7/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd
+Duplicated file found; will not be sent for synthesis: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4/bd_0/ip/ip_8/hdl/lmb_bram_if_cntlr_v4_0_vh_rfs.vhd
+Duplicated file found; will not be sent for synthesis: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4/bd_0/ip/ip_9/hdl/blk_mem_gen_v8_4_vhsyn_rfs.vhd
+CRC performance measure: elapsed=00:00:00.18s;;memory_peak=1385.066MB;;memory_gain=0.000MB
