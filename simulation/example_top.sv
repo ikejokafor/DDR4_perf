@@ -147,6 +147,7 @@ module example_top #
   localparam ECC                   = "ON";
   localparam C_PERIOD_83MHz = 12; 
 
+    localparam C_NUM_TOTAL_CLIENTS      = 5;
     
     localparam C_AXI_ID_WTH             = C_NUM_TOTAL_CLIENTS * `AXI_ID_WTH;
     localparam C_AXI_ADDR_WTH           = C_NUM_TOTAL_CLIENTS * `AXI_ADDR_WTH;
@@ -673,18 +674,18 @@ ddr4 u_ddr4
         .bid			( axi_bid[(0 * `AXI_ID_WTH) +: `AXI_ID_WTH]             ),	// Response ID
         .bresp		    ( axi_bresp[(0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),	// Write response
         .bvalid		    ( axi_bvalid[0]                                         ),	// Write reponse valid
-        .bready		    ( axi_bready[0]                                         ),	// Response ready
+        .bready		    ( axi_bready[0]                                         ),  // Response ready
         // AXI read address channel signals
-        .araddr		    ( axi_araddr[(0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),   // Read address
-        .arlen		    ( axi_arlen[(0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),   // Read Burst Length
-        .arvalid		( axi_arvalid[0]                                        ),   // Read address valid  
-        .arready		( axi_arready[0]                                        ),   // Read address ready
+        .araddr		    ( axi_araddr[(0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
+        .arlen		    ( axi_arlen[(0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
+        .arvalid		( axi_arvalid[0]                                        ),  // Read address valid  
+        .arready		( axi_arready[0]                                        ),  // Read address ready
         // AXI read data channel signals   
-        .rdata		    ( axi_rdata[(0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),   // Read data
-        .rresp		    ( axi_rresp[(0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),   // Read response
-        .rlast		    ( axi_rlast[0]                                          ),   // Read last
-        .rvalid		    ( axi_rvalid[0]                                         ),   // Read reponse valid
-        .rready		    ( axi_rready[0]                                         ),   // Read Response ready      
+        .rdata		    ( axi_rdata[(0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
+        .rresp		    ( axi_rresp[(0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
+        .rlast		    ( axi_rlast[0]                                          ),  // Read last
+        .rvalid		    ( axi_rvalid[0]                                         ),  // Read reponse valid
+        .rready		    ( axi_rready[0]                                         )   // Read Response ready      
     ); 
     
     
@@ -710,16 +711,16 @@ ddr4 u_ddr4
         .bvalid		    ( axi_bvalid[1]                                         ),	// Write reponse valid
         .bready		    ( axi_bready[1]                                         ),	// Response ready
         // AXI read address channel signals
-        .araddr		    ( axi_araddr[(1 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),   // Read address
-        .arlen		    ( axi_arlen[(1 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),   // Read Burst Length
-        .arvalid		( axi_arvalid[1]                                        ),   // Read address valid  
-        .arready		( axi_arready[1]                                        ),   // Read address ready
+        .araddr		    ( axi_araddr[(1 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
+        .arlen		    ( axi_arlen[(1 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
+        .arvalid		( axi_arvalid[1]                                        ),  // Read address valid  
+        .arready		( axi_arready[1]                                        ),  // Read address ready
         // AXI read data channel signals   
-        .rdata		    ( axi_rdata[(1 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),   // Read data
-        .rresp		    ( axi_rresp[(1 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),   // Read response
-        .rlast		    ( axi_rlast[1]                                          ),   // Read last
-        .rvalid		    ( axi_rvalid[1]                                         ),   // Read reponse valid
-        .rready		    ( axi_rready[1]                                         ),   // Read Response ready      
+        .rdata		    ( axi_rdata[(1 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
+        .rresp		    ( axi_rresp[(1 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
+        .rlast		    ( axi_rlast[1]                                          ),  // Read last
+        .rvalid		    ( axi_rvalid[1]                                         ),  // Read reponse valid
+        .rready		    ( axi_rready[1]                                         )   // Read Response ready      
     );  
     
     
@@ -745,16 +746,16 @@ ddr4 u_ddr4
         .bvalid		    ( axi_bvalid[2]                                         ),	// Write reponse valid
         .bready		    ( axi_bready[2]                                         ),	// Response ready
         // AXI read address channel signals
-        .araddr		    ( axi_araddr[(2 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),   // Read address
-        .arlen		    ( axi_arlen[(2 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),   // Read Burst Length
-        .arvalid		( axi_arvalid[2]                                        ),   // Read address valid  
-        .arready		( axi_arready[2]                                        ),   // Read address ready
+        .araddr		    ( axi_araddr[(2 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
+        .arlen		    ( axi_arlen[(2 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
+        .arvalid		( axi_arvalid[2]                                        ),  // Read address valid  
+        .arready		( axi_arready[2]                                        ),  // Read address ready
         // AXI read data channel signals   
-        .rdata		    ( axi_rdata[(2 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),   // Read data
-        .rresp		    ( axi_rresp[(2 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),   // Read response
-        .rlast		    ( axi_rlast[2]                                          ),   // Read last
-        .rvalid		    ( axi_rvalid[2]                                         ),   // Read reponse valid
-        .rready		    ( axi_rready[2]                                         ),   // Read Response ready      
+        .rdata		    ( axi_rdata[(2 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
+        .rresp		    ( axi_rresp[(2 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
+        .rlast		    ( axi_rlast[2]                                          ),  // Read last
+        .rvalid		    ( axi_rvalid[2]                                         ),  // Read reponse valid
+        .rready		    ( axi_rready[2]                                         )   // Read Response ready      
     );  
     
     
@@ -780,16 +781,16 @@ ddr4 u_ddr4
         .bvalid		    ( axi_bvalid[3]                                         ),	// Write reponse valid
         .bready		    ( axi_bready[3]                                         ),	// Response ready
         // AXI read address channel signals
-        .araddr		    ( axi_araddr[(3 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),   // Read address
-        .arlen		    ( axi_arlen[(3 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),   // Read Burst Length
-        .arvalid		( axi_arvalid[3]                                        ),   // Read address valid  
-        .arready		( axi_arready[3]                                        ),   // Read address ready
+        .araddr		    ( axi_araddr[(3 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
+        .arlen		    ( axi_arlen[(3 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
+        .arvalid		( axi_arvalid[3]                                        ),  // Read address valid  
+        .arready		( axi_arready[3]                                        ),  // Read address ready
         // AXI read data channel signals   
-        .rdata		    ( axi_rdata[(3 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),   // Read data
-        .rresp		    ( axi_rresp[(3 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),   // Read response
-        .rlast		    ( axi_rlast[3]                                          ),   // Read last
-        .rvalid		    ( axi_rvalid[3]                                         ),   // Read reponse valid
-        .rready		    ( axi_rready[3]                                         ),   // Read Response ready      
+        .rdata		    ( axi_rdata[(3 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
+        .rresp		    ( axi_rresp[(3 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
+        .rlast		    ( axi_rlast[3]                                          ),  // Read last
+        .rvalid		    ( axi_rvalid[3]                                         ),  // Read reponse valid
+        .rready		    ( axi_rready[3]                                         )   // Read Response ready      
     );  
     
     
@@ -815,16 +816,16 @@ ddr4 u_ddr4
         .bvalid		    ( axi_bvalid[4]                                         ),	// Write reponse valid
         .bready		    ( axi_bready[4]                                         ),	// Response ready
         // AXI read address channel signals
-        .araddr		    ( axi_araddr[(4 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),   // Read address
-        .arlen		    ( axi_arlen[(4 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),   // Read Burst Length
-        .arvalid		( axi_arvalid[4]                                        ),   // Read address valid  
-        .arready		( axi_arready[4]                                        ),   // Read address ready
+        .araddr		    ( axi_araddr[(4 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
+        .arlen		    ( axi_arlen[(4 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
+        .arvalid		( axi_arvalid[4]                                        ),  // Read address valid  
+        .arready		( axi_arready[4]                                        ),  // Read address ready
         // AXI read data channel signals   
-        .rdata		    ( axi_rdata[(4 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),   // Read data
-        .rresp		    ( axi_rresp[(4 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),   // Read response
-        .rlast		    ( axi_rlast[4]                                          ),   // Read last
-        .rvalid		    ( axi_rvalid[4]                                         ),   // Read reponse valid
-        .rready		    ( axi_rready[4]                                         ),   // Read Response ready      
+        .rdata		    ( axi_rdata[(4 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
+        .rresp		    ( axi_rresp[(4 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
+        .rlast		    ( axi_rlast[4]                                          ),  // Read last
+        .rvalid		    ( axi_rvalid[4]                                         ),  // Read reponse valid
+        .rready		    ( axi_rready[4]                                         )   // Read Response ready      
     );  
     
     
@@ -836,11 +837,11 @@ ddr4 u_ddr4
  
     initial begin
         fork
-            axi_drvr("./memTrace_0_im.txt", axi_intf[0]);
-            axi_drvr("./memTrace_0_om.txt", axi_intf[1]);
-            axi_drvr("./memTrace_0_pm.txt", axi_intf[2]);
-            axi_drvr("./memTrace_0_pv.txt", axi_intf[3]);
-            axi_drvr("./memTrace_0_rm.txt", axi_intf[4]);
+            axi_drvr("./memTrace_0_im.txt", axi_intf[0], 48336);
+            axi_drvr("./memTrace_0_om.txt", axi_intf[1], 261187);
+            axi_drvr("./memTrace_0_pm.txt", axi_intf[2], 1444361);
+            // axi_drvr("./memTrace_0_pv.txt", axi_intf[3], );
+            axi_drvr("./memTrace_0_rm.txt", axi_intf[4], 197828);
         join_none
     end
     
@@ -856,17 +857,23 @@ ddr4 u_ddr4
 endmodule
 
 
-task axi_drvr(string fn, virtual AXI_intf axi_intf);
-    //---------------------------------------------------------------------------------------------
+task axi_drvr(string fn, virtual AXI_intf axi_intf, shortreal trans_tot);
     integer fd;
-    int trans_no;
+    shortreal trans_no;
     int time_delta;
     string op;
     time addr;
+    shortreal onehnrd;
     int len;
+    int prog_factor;
+    string str;
+    int perct;
+    //---------------------------------------------------------------------------------------------
     fd = $fopen(fn);
+    prog_factor = 10;
+    onehnrd = 100.0;
     forever begin
-        @(axi_intf.clk)
+        @(axi_intf.clk);
         if(!axi_intf.rst && axi_intf.ce) begin
             break;
         end
@@ -879,6 +886,11 @@ task axi_drvr(string fn, virtual AXI_intf axi_intf);
             axi_wr(addr, len, axi_intf);
         end       
         $fscanf(fd, "%d,%d,%s,%d,%d\n", trans_no, time_delta, op, addr, len);
+        perct = $floor((trans_no / trans_no) * onehnrd);
+        if(perct >= prog_factor && perct > 0) begin
+            prog_factor = prog_factor + 10;
+            $display("finished %d / %d transactions", trans_no, trans_tot);
+        end
         repeat(time_delta) example_top.C_PERIOD_83MHz;
     end
 endtask: axi_drvr
@@ -899,6 +911,9 @@ task axi_rd(time addr, int len, virtual AXI_intf axi_intf);
     axi_intf.rdAddr.arsize  <= 3;
     axi_intf.rdData.rready  <= 1;
     @(axi_intf.clk);
+    $display("%[AXI_READ]");
+    $display("%\t address: %d", addr);
+    $display("%\t length: %d", len);
     axi_intf.rdAddr.arvalid <= 0;
     axi_intf.rdAddr.araddr  <= 0;
     axi_intf.rdAddr.arlen   <= 0;
@@ -930,6 +945,9 @@ task axi_wr(time addr, int len, virtual AXI_intf axi_intf);
     axi_intf.wrAddr.awsize  <= 3;
     axi_intf.resp.bready    <= 1;
     @(axi_intf.clk);
+    $display("%[AXI_WRITE]");
+    $display("%\t address: %d", addr);
+    $display("%\t length: %d", len);
     axi_intf.wrAddr.awvalid <= 0;
     axi_intf.wrAddr.awaddr  <= 0;
     axi_intf.wrAddr.awlen   <= 0;
