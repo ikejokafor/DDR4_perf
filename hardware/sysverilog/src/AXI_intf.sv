@@ -11,7 +11,6 @@ interface AXI_intf
     ce              ,
     rst             ,
     // AXI Write Address Ports
-    awid		    ,   // Write ID
     awaddr		    ,   // Write address
     awlen		    ,   // Write Burst Length
     awvalid		    ,   // Write address valid
@@ -22,21 +21,19 @@ interface AXI_intf
     wvalid		    ,   // Write valid    
     wready		    ,   // Write data ready
     // AXI write response channel signals
-    bid			    ,   // Response ID
     bresp		    ,   // Write response
     bvalid		    ,   // Write reponse valid
     bready		    ,   // Response ready 
     // AXI read address channel signals
-    arid		    ,   // Read ID
     araddr		    ,   // Read address
     arlen		    ,   // Read Burst Length
     arvalid		    ,   // Read address valid     
     arready		    ,   // Read address ready
-    // AXI read data channel signals   
-    rid             ,   // Read response ID
+    // AXI read data channel signals
+    rid_m           ,
     rdata		    ,   // Read data
     rresp		    ,   // Read response
-    rlast		    ,   // Read last
+    rlast_d		    ,   // Read last
     rvalid		    ,   // Read reponse valid
     rready		        // Read Response ready	   
 );
@@ -54,7 +51,6 @@ interface AXI_intf
     input  logic                            ce              ;
     input  logic                            rst             ;
     // AXI Write Address Ports 
- 	output logic [   `AXI_ID_WTH - 1:0]  	awid		    ;	// Write ID
  	output logic [ `AXI_ADDR_WTH - 1:0]  	awaddr		    ;	// Write address
  	output logic [  `AXI_LEN_WTH - 1:0]  	awlen		    ;	// Write Burst Length
 	output logic  	                        awvalid		    ;	// Write address valid
@@ -65,23 +61,22 @@ interface AXI_intf
 	output logic 	                        wvalid		    ;	// Write valid  	
     input  logic 	                        wready		    ;	// Write data ready
 	// AXI write response channel signals
-	input  logic [   `AXI_ID_WTH - 1:0]  	bid			    ;	// Response ID
 	input  logic [ `AXI_RESP_WTH - 1:0]  	bresp		    ;	// Write response
 	input  logic  	                        bvalid		    ;	// Write reponse valid
 	output logic  	                        bready		    ;	// Response ready
 	// AXI read address channel signals
-	output logic [   `AXI_ID_WTH - 1:0]     arid		    ;	// Read ID
 	output logic [ `AXI_ADDR_WTH - 1:0]     araddr		    ;   // Read address
 	output logic [  `AXI_LEN_WTH - 1:0]     arlen		    ;   // Read Burst Length
  	output logic                            arvalid		    ;   // Read address valid  
 	input  logic                            arready		    ;   // Read address ready
 	// AXI read data channel signals   
-	input  logic [   `AXI_ID_WTH - 1:0]     rid             ;
+    input  logic [                 3:0]     rid_m           ;
     input  logic [ `AXI_DATA_WTH - 1:0]     rdata		    ;   // Read data
 	input  logic [ `AXI_RESP_WTH - 1:0]     rresp		    ;   // Read response
-	input  logic                            rlast		    ;   // Read last
+	input  logic                            rlast_d		    ;   // Read last
 	input  logic                            rvalid		    ;   // Read reponse valid
 	output logic                            rready		    ;   // Read Response ready	
+
 
     
     clocking wrAddr @(posedge clk);
@@ -94,7 +89,7 @@ interface AXI_intf
 
 	clocking wrData @(posedge clk);
 		input       wready          ;
-        input       wvalid          ;
+        output      wvalid          ;
         output      wlast           ;
         output      wdata           ;
 	endclocking: wrData
@@ -118,7 +113,7 @@ interface AXI_intf
 	clocking rdData @(posedge clk);
         input       rdata           ;
         input       rresp           ;
-        input       rlast           ;
+        input       rlast_d         ;
 		input       rvalid          ;
         inout       rready          ;
 	endclocking: rdData
