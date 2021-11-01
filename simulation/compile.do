@@ -178,7 +178,7 @@ vlog -work work \
 
 
 # Testbench
-vlog -64 -incr -sv -work work \
+vlog -64 -incr -sv -work work -DSIMULATION \
 	+incdir+./ \
 	+incdir+$env(WORKSPACE_PATH)/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4_ex/ddr4_ex.srcs/sources_1/ip/ddr4/rtl/ip_top \
 	+incdir+$env(WORKSPACE_PATH)/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/ddr4_ex/ddr4_ex.srcs/sources_1/ip/ddr4/rtl/cal \

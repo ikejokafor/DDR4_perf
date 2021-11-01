@@ -254,7 +254,7 @@ axi_interconnect your_instance_name (
   .S04_AXI_RREADY(S04_AXI_RREADY),              // input wire S04_AXI_RREADY
   .M00_AXI_ARESET_OUT_N(M00_AXI_ARESET_OUT_N),  // output wire M00_AXI_ARESET_OUT_N
   .M00_AXI_ACLK(M00_AXI_ACLK),                  // input wire M00_AXI_ACLK
-  .M00_AXI_AWID(M00_AXI_AWID),                  // output wire [3 : 0] M00_AXI_AWID
+  .M00_AXI_AWID(M00_AXI_AWID),                  // output wire [4 : 0] M00_AXI_AWID
   .M00_AXI_AWADDR(M00_AXI_AWADDR),              // output wire [31 : 0] M00_AXI_AWADDR
   .M00_AXI_AWLEN(M00_AXI_AWLEN),                // output wire [7 : 0] M00_AXI_AWLEN
   .M00_AXI_AWSIZE(M00_AXI_AWSIZE),              // output wire [2 : 0] M00_AXI_AWSIZE
@@ -270,11 +270,11 @@ axi_interconnect your_instance_name (
   .M00_AXI_WLAST(M00_AXI_WLAST),                // output wire M00_AXI_WLAST
   .M00_AXI_WVALID(M00_AXI_WVALID),              // output wire M00_AXI_WVALID
   .M00_AXI_WREADY(M00_AXI_WREADY),              // input wire M00_AXI_WREADY
-  .M00_AXI_BID(M00_AXI_BID),                    // input wire [3 : 0] M00_AXI_BID
+  .M00_AXI_BID(M00_AXI_BID),                    // input wire [4 : 0] M00_AXI_BID
   .M00_AXI_BRESP(M00_AXI_BRESP),                // input wire [1 : 0] M00_AXI_BRESP
   .M00_AXI_BVALID(M00_AXI_BVALID),              // input wire M00_AXI_BVALID
   .M00_AXI_BREADY(M00_AXI_BREADY),              // output wire M00_AXI_BREADY
-  .M00_AXI_ARID(M00_AXI_ARID),                  // output wire [3 : 0] M00_AXI_ARID
+  .M00_AXI_ARID(M00_AXI_ARID),                  // output wire [4 : 0] M00_AXI_ARID
   .M00_AXI_ARADDR(M00_AXI_ARADDR),              // output wire [31 : 0] M00_AXI_ARADDR
   .M00_AXI_ARLEN(M00_AXI_ARLEN),                // output wire [7 : 0] M00_AXI_ARLEN
   .M00_AXI_ARSIZE(M00_AXI_ARSIZE),              // output wire [2 : 0] M00_AXI_ARSIZE
@@ -285,7 +285,7 @@ axi_interconnect your_instance_name (
   .M00_AXI_ARQOS(M00_AXI_ARQOS),                // output wire [3 : 0] M00_AXI_ARQOS
   .M00_AXI_ARVALID(M00_AXI_ARVALID),            // output wire M00_AXI_ARVALID
   .M00_AXI_ARREADY(M00_AXI_ARREADY),            // input wire M00_AXI_ARREADY
-  .M00_AXI_RID(M00_AXI_RID),                    // input wire [3 : 0] M00_AXI_RID
+  .M00_AXI_RID(M00_AXI_RID),                    // input wire [4 : 0] M00_AXI_RID
   .M00_AXI_RDATA(M00_AXI_RDATA),                // input wire [511 : 0] M00_AXI_RDATA
   .M00_AXI_RRESP(M00_AXI_RRESP),                // input wire [1 : 0] M00_AXI_RRESP
   .M00_AXI_RLAST(M00_AXI_RLAST),                // input wire M00_AXI_RLAST

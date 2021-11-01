@@ -115,7 +115,7 @@ interface AXI_intf
         input       rresp           ;
         input       rlast_d         ;
 		input       rvalid          ;
-        inout       rready          ;
+        output      rready          ;
 	endclocking: rdData
 
 

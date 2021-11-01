@@ -5926,7 +5926,7 @@
         </spirit:parameter>
         <spirit:parameter>
           <spirit:name>ID_WIDTH</spirit:name>
-          <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="BUSIFPARAM_VALUE.AXI4_MASTER_M00_AXI.ID_WIDTH">4</spirit:value>
+          <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="BUSIFPARAM_VALUE.AXI4_MASTER_M00_AXI.ID_WIDTH">5</spirit:value>
           <spirit:vendorExtensions>
             <xilinx:parameterInfo>
               <xilinx:parameterUsage>none</xilinx:parameterUsage>
@@ -11520,11 +11520,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:39 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:43 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11546,11 +11546,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:44 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:45 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11566,11 +11566,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:44 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:45 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11589,11 +11589,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:45 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:46 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:81304fca</spirit:value>
+            <spirit:value>9:3a42813f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11609,11 +11609,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:45 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:46 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:81304fca</spirit:value>
+            <spirit:value>9:3a42813f</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11628,11 +11628,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:45 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:46 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11647,11 +11647,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:27:45 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:13:46 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -11665,11 +11665,11 @@
         <spirit:parameters>
           <spirit:parameter>
             <spirit:name>GENtimestamp</spirit:name>
-            <spirit:value>Thu Oct 28 23:34:34 UTC 2021</spirit:value>
+            <spirit:value>Mon Nov 01 22:22:11 UTC 2021</spirit:value>
           </spirit:parameter>
           <spirit:parameter>
             <spirit:name>outputProductCRC</spirit:name>
-            <spirit:value>9:9c279440</spirit:value>
+            <spirit:value>9:a6d39e97</spirit:value>
           </spirit:parameter>
         </spirit:parameters>
       </spirit:view>
@@ -26980,7 +26980,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">3</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">4</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -27228,7 +27228,7 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">3</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">4</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -27288,7 +27288,7 @@
         <spirit:wire>
           <spirit:direction>out</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">3</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">4</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -27463,7 +27463,7 @@
         <spirit:wire>
           <spirit:direction>in</spirit:direction>
           <spirit:vector>
-            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">3</spirit:left>
+            <spirit:left spirit:format="long" spirit:resolve="dependent" spirit:dependency="spirit:decode(id(&apos;MODELPARAM_VALUE.C_THREAD_ID_WIDTH&apos;))+3">4</spirit:left>
             <spirit:right spirit:format="long">0</spirit:right>
           </spirit:vector>
           <spirit:wireTypeDefs>
@@ -27560,7 +27560,7 @@
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_THREAD_ID_WIDTH</spirit:name>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_THREAD_ID_WIDTH">0</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_THREAD_ID_WIDTH">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_THREAD_ID_PORT_WIDTH</spirit:name>
@@ -27572,7 +27572,7 @@
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_SYNCHRONIZER_STAGE</spirit:name>
-        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_SYNCHRONIZER_STAGE">2</spirit:value>
+        <spirit:value spirit:format="long" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_SYNCHRONIZER_STAGE">4</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S00_AXI_DATA_WIDTH</spirit:name>
@@ -28320,23 +28320,23 @@
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S00_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S00_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S01_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S01_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S01_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S02_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S02_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S02_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S03_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S03_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S03_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S04_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S04_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_S04_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_S05_AXI_REGISTER</spirit:name>
@@ -28384,7 +28384,7 @@
       </spirit:modelParameter>
       <spirit:modelParameter spirit:dataType="integer">
         <spirit:name>C_M00_AXI_REGISTER</spirit:name>
-        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_M00_AXI_REGISTER" spirit:bitStringLength="1">0</spirit:value>
+        <spirit:value spirit:format="bitString" spirit:resolve="generated" spirit:id="MODELPARAM_VALUE.C_M00_AXI_REGISTER" spirit:bitStringLength="1">1</spirit:value>
       </spirit:modelParameter>
     </spirit:modelParameters>
   </spirit:model>
@@ -28666,7 +28666,7 @@
     <spirit:parameter>
       <spirit:name>THREAD_ID_WIDTH</spirit:name>
       <spirit:displayName>THREAD_ID_WIDTH</spirit:displayName>
-      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.THREAD_ID_WIDTH" spirit:choiceRef="choice_pairs_26023fe8" spirit:order="2">0</spirit:value>
+      <spirit:value spirit:resolve="user" spirit:id="PARAM_VALUE.THREAD_ID_WIDTH" spirit:choiceRef="choice_pairs_26023fe8" spirit:order="2">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>AXI_ADDR_WIDTH</spirit:name>
@@ -29521,27 +29521,27 @@
     <spirit:parameter>
       <spirit:name>S00_AXI_REGISTER</spirit:name>
       <spirit:displayName>S00_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S00_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="190">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S00_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="190">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S01_AXI_REGISTER</spirit:name>
       <spirit:displayName>S01_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S01_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="191">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S01_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="191">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S02_AXI_REGISTER</spirit:name>
       <spirit:displayName>S02_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S02_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="192">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S02_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="192">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S03_AXI_REGISTER</spirit:name>
       <spirit:displayName>S03_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S03_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="193">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S03_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="193">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S04_AXI_REGISTER</spirit:name>
       <spirit:displayName>S04_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S04_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="194">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.S04_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="194">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S05_AXI_REGISTER</spirit:name>
@@ -29601,7 +29601,7 @@
     <spirit:parameter>
       <spirit:name>M00_AXI_REGISTER</spirit:name>
       <spirit:displayName>M00_AXI_REGISTER</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.M00_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="206">0</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.M00_AXI_REGISTER" spirit:choiceRef="choice_pairs_4873554b" spirit:order="206">1</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>ACLK_PERIOD</spirit:name>
@@ -29615,7 +29615,7 @@
     <spirit:parameter>
       <spirit:name>SYNCHRONIZATION_STAGES</spirit:name>
       <spirit:displayName>Synchronization Stages</spirit:displayName>
-      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SYNCHRONIZATION_STAGES" spirit:order="208" spirit:minimum="2" spirit:maximum="4" spirit:rangeType="long">2</spirit:value>
+      <spirit:value spirit:format="long" spirit:resolve="user" spirit:id="PARAM_VALUE.SYNCHRONIZATION_STAGES" spirit:order="208" spirit:minimum="2" spirit:maximum="4" spirit:rangeType="long">4</spirit:value>
     </spirit:parameter>
     <spirit:parameter>
       <spirit:name>S00_AXI_ACLK_RATIO</spirit:name>
@@ -30105,18 +30105,29 @@
         <xilinx:configElementInfo xilinx:referenceId="BUSIFPARAM_VALUE.AXI4_SLAVE_S15_AXI.WUSER_WIDTH" xilinx:valueSource="constant"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.INTERCONNECT_DATA_WIDTH" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.M00_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.M00_AXI_IS_ACLK_ASYNC" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.M00_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.NUM_SLAVE_PORTS" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S00_AXI_ACLK_RATIO" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S00_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S00_AXI_IS_ACLK_ASYNC" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S00_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S01_AXI_ACLK_RATIO" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S01_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S01_AXI_IS_ACLK_ASYNC" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S01_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S02_AXI_ACLK_RATIO" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S02_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S02_AXI_IS_ACLK_ASYNC" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S02_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S03_AXI_ACLK_RATIO" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S03_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S03_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S04_AXI_ACLK_RATIO" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S04_AXI_DATA_WIDTH" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.S04_AXI_REGISTER" xilinx:valueSource="user"/>
         <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.SYNCHRONIZATION_STAGES" xilinx:valueSource="user"/>
+        <xilinx:configElementInfo xilinx:referenceId="PARAM_VALUE.THREAD_ID_WIDTH" xilinx:valueSource="user"/>
       </xilinx:configElementInfos>
     </xilinx:coreExtensions>
     <xilinx:packagingInfo>
