@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <GenRun Id="ddr4_synth_1" LaunchPart="xcku3p-ffva676-3-e" LaunchTime="1635458932">
-  <File Type="RDS-UTIL" Name="ddr4_utilization_synth.rpt"/>
   <File Type="RDS-UTIL-PB" Name="ddr4_utilization_synth.pb"/>
+  <File Type="RDS-UTIL" Name="ddr4_utilization_synth.rpt"/>
   <File Type="RDS-RDS" Name="ddr4.vds"/>
   <File Type="RDS-DCP" Name="ddr4.dcp"/>
   <File Type="PA-TCL" Name="ddr4.tcl"/>

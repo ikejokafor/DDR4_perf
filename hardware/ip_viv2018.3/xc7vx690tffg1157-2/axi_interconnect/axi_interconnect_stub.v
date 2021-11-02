@@ -1,10 +1,10 @@
 // Copyright 1986-2018 Xilinx, Inc. All Rights Reserved.
 // --------------------------------------------------------------------------------
 // Tool Version: Vivado v.2018.3 (lin64) Build 2405991 Thu Dec  6 23:36:41 MST 2018
-// Date        : Mon Nov  1 18:22:02 2021
+// Date        : Mon Nov  1 18:21:27 2021
 // Host        : e5-cse-322-16 running 64-bit Ubuntu 18.04.5 LTS
-// Command     : write_verilog -force -mode synth_stub
-//               /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2018.3/xc7vx690tffg1157-2/axi_interconnect/axi_interconnect_stub.v
+// Command     : write_verilog -force -mode synth_stub -rename_top axi_interconnect -prefix
+//               axi_interconnect_ axi_interconnect_stub.v
 // Design      : axi_interconnect
 // Purpose     : Stub declaration of top-level module interface
 // Device      : xcku3p-ffva676-3-e
