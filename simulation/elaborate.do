@@ -1,16 +1,17 @@
 vopt -64 +acc -l elaborate.log \
-    -L xil_defaultlib  \
     -L xpm \
-    -L microblaze_v11_0_0 \
+    -L microblaze_v11_0_2 \
+    -L xil_defaultlib \
     -L lib_cdc_v1_0_2 \
     -L proc_sys_reset_v5_0_13 \
-    -L lmb_v10_v3_0_9 \
-    -L lmb_bram_if_cntlr_v4_0_15 \
-    -L blk_mem_gen_v8_4_2 \
-    -L iomodule_v3_1_4 \
+    -L lmb_v10_v3_0_10 \
+    -L lmb_bram_if_cntlr_v4_0_17 \
+    -L blk_mem_gen_v8_4_4 \
+    -L iomodule_v3_1_5 \
     -L unisims_ver \
     -L unimacro_ver \
     -L secureip \
     -L accel_infst_common \
-    -L axi_interconnect_v1_7_15 \
+    -L axi_interconnect_v1_7_17 \
     -work work work.sim_tb_top work.glbl -o sim_tb_top_opt
+

@@ -83,12 +83,20 @@
 `endif
 
 
-interface Sys_intf
-(
-	clk
-);
-    input logic         clk;
-endinterface: Sys_intf
+typedef struct {
+    int id;
+    string fn;
+    string op;
+    longint ts;
+    int dma_ref;
+    logic [`AXI_ADDR_WTH:0] addr;
+    logic [`AXI_LEN_WTH:0] len;
+    int minIdx;
+} axi_trans_t;
+
+
+logic [0:3] trans_in_prog;
+
 
 
 `timescale 1ps/1ps
@@ -229,60 +237,62 @@ module example_top #
 
 
   reg                              c0_ddr4_aresetn;
-  logic                             c0_ddr4_data_msmatch_err;
-  logic                             c0_ddr4_write_err;
-  logic                             c0_ddr4_read_err;
-  logic                             c0_ddr4_test_cmptd;
-  logic                             c0_ddr4_write_cmptd;
-  logic                             c0_ddr4_read_cmptd;
-  logic                             c0_ddr4_cmptd_one_wr_rd;
+  wire                             c0_ddr4_data_msmatch_err;
+  wire                             c0_ddr4_write_err;
+  wire                             c0_ddr4_read_err;
+  wire                             c0_ddr4_test_cmptd;
+  wire                             c0_ddr4_write_cmptd;
+  wire                             c0_ddr4_read_cmptd;
+  wire                             c0_ddr4_cmptd_one_wr_rd;
+  wire                             c0_ddr4_tg_data_err_status_rdy;
+  wire [1:0]                       c0_ddr4_tg_data_err_status;
 
   // Slave Interface Write Address Ports
-  logic [3:0]      c0_ddr4_s_axi_awid;
-  logic [31:0]    c0_ddr4_s_axi_awaddr;
-  logic [7:0]                       c0_ddr4_s_axi_awlen;
-  logic [2:0]                       c0_ddr4_s_axi_awsize;
-  logic [1:0]                       c0_ddr4_s_axi_awburst;
-  logic [3:0]                       c0_ddr4_s_axi_awcache;
-  logic [2:0]                       c0_ddr4_s_axi_awprot;
-  logic                             c0_ddr4_s_axi_awvalid;
-  logic                             c0_ddr4_s_axi_awready;
+  wire [3:0]      c0_ddr4_s_axi_awid;
+  wire [31:0]    c0_ddr4_s_axi_awaddr;
+  wire [7:0]                       c0_ddr4_s_axi_awlen;
+  wire [2:0]                       c0_ddr4_s_axi_awsize;
+  wire [1:0]                       c0_ddr4_s_axi_awburst;
+  wire [3:0]                       c0_ddr4_s_axi_awcache;
+  wire [2:0]                       c0_ddr4_s_axi_awprot;
+  wire                             c0_ddr4_s_axi_awvalid;
+  wire                             c0_ddr4_s_axi_awready;
    // Slave Interface Write Data Ports
-  logic [511:0]    c0_ddr4_s_axi_wdata;
-  logic [63:0]  c0_ddr4_s_axi_wstrb;
-  logic                             c0_ddr4_s_axi_wlast;
-  logic                             c0_ddr4_s_axi_wvalid;
-  logic                             c0_ddr4_s_axi_wready;
+  wire [511:0]    c0_ddr4_s_axi_wdata;
+  wire [63:0]  c0_ddr4_s_axi_wstrb;
+  wire                             c0_ddr4_s_axi_wlast;
+  wire                             c0_ddr4_s_axi_wvalid;
+  wire                             c0_ddr4_s_axi_wready;
    // Slave Interface Write Response Ports
-  logic                             c0_ddr4_s_axi_bready;
-  logic [3:0]      c0_ddr4_s_axi_bid;
-  logic [1:0]                       c0_ddr4_s_axi_bresp;
-  logic                             c0_ddr4_s_axi_bvalid;
+  wire                             c0_ddr4_s_axi_bready;
+  wire [3:0]      c0_ddr4_s_axi_bid;
+  wire [1:0]                       c0_ddr4_s_axi_bresp;
+  wire                             c0_ddr4_s_axi_bvalid;
    // Slave Interface Read Address Ports
-  logic [3:0]      c0_ddr4_s_axi_arid;
-  logic [31:0]    c0_ddr4_s_axi_araddr;
-  logic [7:0]                       c0_ddr4_s_axi_arlen;
-  logic [2:0]                       c0_ddr4_s_axi_arsize;
-  logic [1:0]                       c0_ddr4_s_axi_arburst;
-  logic [3:0]                       c0_ddr4_s_axi_arcache;
-  logic                             c0_ddr4_s_axi_arvalid;
-  logic                             c0_ddr4_s_axi_arready;
+  wire [3:0]      c0_ddr4_s_axi_arid;
+  wire [31:0]    c0_ddr4_s_axi_araddr;
+  wire [7:0]                       c0_ddr4_s_axi_arlen;
+  wire [2:0]                       c0_ddr4_s_axi_arsize;
+  wire [1:0]                       c0_ddr4_s_axi_arburst;
+  wire [3:0]                       c0_ddr4_s_axi_arcache;
+  wire                             c0_ddr4_s_axi_arvalid;
+  wire                             c0_ddr4_s_axi_arready;
    // Slave Interface Read Data Ports
-  logic                             c0_ddr4_s_axi_rready;
-  logic [3:0]      c0_ddr4_s_axi_rid;
-  logic [511:0]    c0_ddr4_s_axi_rdata;
-  logic [1:0]                       c0_ddr4_s_axi_rresp;
-  logic                             c0_ddr4_s_axi_rlast;
-  logic                             c0_ddr4_s_axi_rvalid;
+  wire                             c0_ddr4_s_axi_rready;
+  wire [3:0]      c0_ddr4_s_axi_rid;
+  wire [511:0]    c0_ddr4_s_axi_rdata;
+  wire [1:0]                       c0_ddr4_s_axi_rresp;
+  wire                             c0_ddr4_s_axi_rlast;
+  wire                             c0_ddr4_s_axi_rvalid;
 
-  logic                             c0_ddr4_cmp_data_valid;
-  logic [511:0]    c0_ddr4_cmp_data;     // Compare data
-  logic [511:0]    c0_ddr4_rdata_cmp;      // Read data
+  wire                             c0_ddr4_cmp_data_valid;
+  wire [511:0]    c0_ddr4_cmp_data;     // Compare data
+  wire [511:0]    c0_ddr4_rdata_cmp;      // Read data
 
-  logic                             c0_ddr4_dbg_wr_sts_vld;
-  logic [DBG_WR_STS_WIDTH-1:0]      c0_ddr4_dbg_wr_sts;
-  logic                             c0_ddr4_dbg_rd_sts_vld;
-  logic [DBG_RD_STS_WIDTH-1:0]      c0_ddr4_dbg_rd_sts;
+  wire                             c0_ddr4_dbg_wr_sts_vld;
+  wire [DBG_WR_STS_WIDTH-1:0]      c0_ddr4_dbg_wr_sts;
+  wire                             c0_ddr4_dbg_rd_sts_vld;
+  wire [DBG_RD_STS_WIDTH-1:0]      c0_ddr4_dbg_rd_sts;
   assign c0_data_compare_error = c0_ddr4_data_msmatch_err | c0_ddr4_write_err | c0_ddr4_read_err;
 
   // Debug Bus
@@ -290,9 +300,11 @@ module example_top #
 
 
 logic c0_ddr4_reset_n_int;
+logic clk_FAS;
   assign c0_ddr4_reset_n = c0_ddr4_reset_n_int;
   
-  virtual AXI_intf axi_intf[0:4];
+  // virtual AXI_intf i_axi_intf[0:4];
+  // virtual Sys_intf i_sys_intf;
 
 //***************************************************************************
 // The User design is instantiated below. The memory interface ports are
@@ -302,12 +314,12 @@ logic c0_ddr4_reset_n_int;
 //***************************************************************************
 
 
-    clock_gen #(
-        .C_PERIOD(C_PERIOD_83MHz)
-    )
-    i0_clock_gen(
-        .clk_out(clk_FAS)
-    );
+    // clock_gen #(
+    //     .C_PERIOD(C_PERIOD_83MHz)
+    // )
+    // i0_clock_gen(
+    //     .clk_out(clk_FAS)
+    // );
     // clk_conv1x1
     // clk_conv3x3
     
@@ -416,406 +428,24 @@ ddr4 u_ddr4
    end
 
 
-
-    axi_interconnect 
-    i0_axi_interconnect (
-        .INTERCONNECT_ACLK      ( c0_ddr4_clk                                        ),  
-        .INTERCONNECT_ARESETN   ( c0_ddr4_aresetn                                    ),  
-        .S00_AXI_ARESET_OUT_N   (                                                    ),  
-        .S00_AXI_ACLK           ( clk_FAS                                            ),  
-        .S00_AXI_AWID           ( 1'b0                                               ),
-        .S00_AXI_AWADDR         ( axi_awaddr[(0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),
-        .S00_AXI_AWLEN          ( axi_awlen[(0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),
-        .S00_AXI_AWSIZE         ( 3'b110                                             ),  
-        .S00_AXI_AWBURST        ( 2'b01                                              ),  
-        .S00_AXI_AWLOCK         ( 1'b0                                               ),  
-        .S00_AXI_AWCACHE        ( 4'b0                                               ),  
-        .S00_AXI_AWPROT         ( 3'b0                                               ),  
-        .S00_AXI_AWQOS          ( 4'b0                                               ),  
-        .S00_AXI_AWVALID        ( axi_awvalid[0]                                     ),
-        .S00_AXI_AWREADY        ( axi_awready[0]                                     ),
-        .S00_AXI_WDATA          ( axi_wdata[(0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),
-        .S00_AXI_WSTRB          ( 64'hFFFFFFFFFFFFFFFF                               ),  
-        .S00_AXI_WLAST          ( axi_wlast[0]                                       ),  
-        .S00_AXI_WVALID         ( axi_wvalid[0]                                      ),  
-        .S00_AXI_WREADY         ( axi_wready[0]                                      ),  
-        .S00_AXI_BID            ( axi_bid[(0 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),  
-        .S00_AXI_BRESP          ( axi_bresp[(0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S00_AXI_BVALID         ( axi_bvalid[0]                                      ),  
-        .S00_AXI_BREADY         ( axi_bready[0]                                      ),  
-        .S00_AXI_ARID           ( 1'b1                                               ),
-        .S00_AXI_ARADDR         ( axi_araddr[(0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),  
-        .S00_AXI_ARLEN          ( axi_arlen[(0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),  
-        .S00_AXI_ARSIZE         ( 3'b110                                             ),  
-        .S00_AXI_ARBURST        ( 2'b01                                              ),  
-        .S00_AXI_ARLOCK         ( 1'b0                                               ),  
-        .S00_AXI_ARCACHE        ( 4'b0                                               ),  
-        .S00_AXI_ARPROT         ( 3'b0                                               ),  
-        .S00_AXI_ARQOS          ( 4'b0                                               ),  
-        .S00_AXI_ARVALID        ( axi_arvalid[0]                                     ),  
-        .S00_AXI_ARREADY        ( axi_arready[0]                                     ),  
-        .S00_AXI_RID            ( axi_rid[(0 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),
-        .S00_AXI_RDATA          ( axi_rdata[(0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),  
-        .S00_AXI_RRESP          ( axi_rresp[(0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S00_AXI_RLAST          ( axi_rlast[0]                                       ),  
-        .S00_AXI_RVALID         ( axi_rvalid[0]                                      ),  
-        .S00_AXI_RREADY         ( axi_rready[0]                                      ), 
-        // BEGIN ----------------------------------------------------------------------------------------------------------------------------------------
-        .S01_AXI_ARESET_OUT_N   (                                                    ),  
-        .S01_AXI_ACLK           ( clk_FAS                                            ),  
-        .S01_AXI_AWID           ( 1'b0                                               ),
-        .S01_AXI_AWADDR         ( axi_awaddr[(1 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),
-        .S01_AXI_AWLEN          ( axi_awlen[(1 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),
-        .S01_AXI_AWSIZE         ( 3'b110                                             ),  
-        .S01_AXI_AWBURST        ( 2'b01                                              ),  
-        .S01_AXI_AWLOCK         ( 1'b0                                               ),  
-        .S01_AXI_AWCACHE        ( 4'b0                                               ),  
-        .S01_AXI_AWPROT         ( 3'b0                                               ),  
-        .S01_AXI_AWQOS          ( 4'b0                                               ),  
-        .S01_AXI_AWVALID        ( axi_awvalid[1]                                     ),
-        .S01_AXI_AWREADY        ( axi_awready[1]                                     ),
-        .S01_AXI_WDATA          ( axi_wdata[(1 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),
-        .S01_AXI_WSTRB          ( 64'hFFFFFFFFFFFFFFFF                               ),  
-        .S01_AXI_WLAST          ( axi_wlast[1]                                       ),  
-        .S01_AXI_WVALID         ( axi_wvalid[1]                                      ),  
-        .S01_AXI_WREADY         ( axi_wready[1]                                      ),  
-        .S01_AXI_BID            ( axi_bid[(1 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),  
-        .S01_AXI_BRESP          ( axi_bresp[(1 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S01_AXI_BVALID         ( axi_bvalid[1]                                      ),  
-        .S01_AXI_BREADY         ( axi_bready[1]                                      ),  
-        .S01_AXI_ARID           ( 1'b1                                               ),         
-        .S01_AXI_ARADDR         ( axi_araddr[(1 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),  
-        .S01_AXI_ARLEN          ( axi_arlen[(1 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),  
-        .S01_AXI_ARSIZE         ( 3'b110                                             ),  
-        .S01_AXI_ARBURST        ( 2'b01                                              ),  
-        .S01_AXI_ARLOCK         ( 1'b0                                               ),  
-        .S01_AXI_ARCACHE        ( 4'b0                                               ),  
-        .S01_AXI_ARPROT         ( 3'b0                                               ),  
-        .S01_AXI_ARQOS          ( 4'b0                                               ),  
-        .S01_AXI_ARVALID        ( axi_arvalid[1]                                     ),  
-        .S01_AXI_ARREADY        ( axi_arready[1]                                     ),  
-        .S01_AXI_RID            ( axi_rid[(1 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ), 
-        .S01_AXI_RDATA          ( axi_rdata[(1 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),  
-        .S01_AXI_RRESP          ( axi_rresp[(1 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S01_AXI_RLAST          ( axi_rlast[1]                                       ),  
-        .S01_AXI_RVALID         ( axi_rvalid[1]                                      ),  
-        .S01_AXI_RREADY         ( axi_rready[1]                                      ),      
-        // BEGIN ----------------------------------------------------------------------------------------------------------------------------------------
-        .S02_AXI_ARESET_OUT_N   (                                                    ),  
-        .S02_AXI_ACLK           ( clk_FAS                                            ),  
-        .S02_AXI_AWID           ( 1'b0                                               ),
-        .S02_AXI_AWADDR         ( axi_awaddr[(2 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),
-        .S02_AXI_AWLEN          ( axi_awlen[(2 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),
-        .S02_AXI_AWSIZE         ( 3'b110                                             ),  
-        .S02_AXI_AWBURST        ( 2'b01                                              ),  
-        .S02_AXI_AWLOCK         ( 1'b0                                               ),  
-        .S02_AXI_AWCACHE        ( 4'b0                                               ),  
-        .S02_AXI_AWPROT         ( 3'b0                                               ),  
-        .S02_AXI_AWQOS          ( 4'b0                                               ),  
-        .S02_AXI_AWVALID        ( axi_awvalid[2]                                     ),
-        .S02_AXI_AWREADY        ( axi_awready[2]                                     ),
-        .S02_AXI_WDATA          ( axi_wdata[(2 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),
-        .S02_AXI_WSTRB          ( 64'hFFFFFFFFFFFFFFFF                               ),  
-        .S02_AXI_WLAST          ( axi_wlast[2]                                       ),  
-        .S02_AXI_WVALID         ( axi_wvalid[2]                                      ),  
-        .S02_AXI_WREADY         ( axi_wready[2]                                      ),  
-        .S02_AXI_BID            ( axi_bid[(2 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),  
-        .S02_AXI_BRESP          ( axi_bresp[(2 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S02_AXI_BVALID         ( axi_bvalid[2]                                      ),  
-        .S02_AXI_BREADY         ( axi_bready[2]                                      ),  
-        .S02_AXI_ARID           ( 1'b1                                               ), 
-        .S02_AXI_ARADDR         ( axi_araddr[(2 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),  
-        .S02_AXI_ARLEN          ( axi_arlen[(2 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),  
-        .S02_AXI_ARSIZE         ( 3'b110                                             ),  
-        .S02_AXI_ARBURST        ( 2'b01                                              ),  
-        .S02_AXI_ARLOCK         ( 1'b0                                               ),  
-        .S02_AXI_ARCACHE        ( 4'b0                                               ),  
-        .S02_AXI_ARPROT         ( 3'b0                                               ),  
-        .S02_AXI_ARQOS          ( 4'b0                                               ),  
-        .S02_AXI_ARVALID        ( axi_arvalid[2]                                     ),  
-        .S02_AXI_ARREADY        ( axi_arready[2]                                     ),  
-        .S02_AXI_RID            ( axi_rid[(2 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),        
-        .S02_AXI_RDATA          ( axi_rdata[(2 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),  
-        .S02_AXI_RRESP          ( axi_rresp[(2 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S02_AXI_RLAST          ( axi_rlast[2]                                       ),  
-        .S02_AXI_RVALID         ( axi_rvalid[2]                                      ),  
-        .S02_AXI_RREADY         ( axi_rready[2]                                      ),
-        // BEGIN ----------------------------------------------------------------------------------------------------------------------------------------
-        .S03_AXI_ARESET_OUT_N   (                                                    ),  
-        .S03_AXI_ACLK           ( clk_FAS                                            ),  
-        .S03_AXI_AWID           ( 1'b0                                               ),
-        .S03_AXI_AWADDR         ( axi_awaddr[(3 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),
-        .S03_AXI_AWLEN          ( axi_awlen[(3 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),
-        .S03_AXI_AWSIZE         ( 3'b110                                             ),  
-        .S03_AXI_AWBURST        ( 2'b01                                              ),  
-        .S03_AXI_AWLOCK         ( 1'b0                                               ),  
-        .S03_AXI_AWCACHE        ( 4'b0                                               ),  
-        .S03_AXI_AWPROT         ( 3'b0                                               ),  
-        .S03_AXI_AWQOS          ( 4'b0                                               ),  
-        .S03_AXI_AWVALID        ( axi_awvalid[3]                                     ),
-        .S03_AXI_AWREADY        ( axi_awready[3]                                     ),
-        .S03_AXI_WDATA          ( axi_wdata[(3 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),
-        .S03_AXI_WSTRB          ( 64'hFFFFFFFFFFFFFFFF                               ),  
-        .S03_AXI_WLAST          ( axi_wlast[3]                                       ),  
-        .S03_AXI_WVALID         ( axi_wvalid[3]                                      ),  
-        .S03_AXI_WREADY         ( axi_wready[3]                                      ),  
-        .S03_AXI_BID            ( axi_bid[(3 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),  
-        .S03_AXI_BRESP          ( axi_bresp[(3 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S03_AXI_BVALID         ( axi_bvalid[3]                                      ),  
-        .S03_AXI_BREADY         ( axi_bready[3]                                      ),  
-        .S03_AXI_ARID           ( 1'b1                                               ),       
-        .S03_AXI_ARADDR         ( axi_araddr[(3 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),  
-        .S03_AXI_ARLEN          ( axi_arlen[(3 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),  
-        .S03_AXI_ARSIZE         ( 3'b110                                             ),  
-        .S03_AXI_ARBURST        ( 2'b01                                              ),  
-        .S03_AXI_ARLOCK         ( 1'b0                                               ),  
-        .S03_AXI_ARCACHE        ( 4'b0                                               ),  
-        .S03_AXI_ARPROT         ( 3'b0                                               ),  
-        .S03_AXI_ARQOS          ( 4'b0                                               ),  
-        .S03_AXI_ARVALID        ( axi_arvalid[3]                                     ),  
-        .S03_AXI_ARREADY        ( axi_arready[3]                                     ),  
-        .S03_AXI_RID            ( axi_rid[(3 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),        
-        .S03_AXI_RDATA          ( axi_rdata[(3 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),  
-        .S03_AXI_RRESP          ( axi_rresp[(3 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S03_AXI_RLAST          ( axi_rlast[3]                                       ),  
-        .S03_AXI_RVALID         ( axi_rvalid[3]                                      ),  
-        .S03_AXI_RREADY         ( axi_rready[3]                                      ),    
-        // BEGIN ----------------------------------------------------------------------------------------------------------------------------------------
-        .S04_AXI_ARESET_OUT_N   (                                                    ),  
-        .S04_AXI_ACLK           ( clk_FAS                                            ),  
-        .S04_AXI_AWID           ( 1'b0                                               ),
-        .S04_AXI_AWADDR         ( axi_awaddr[(4 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),
-        .S04_AXI_AWLEN          ( axi_awlen[(4 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),
-        .S04_AXI_AWSIZE         ( 3'b110                                             ),  
-        .S04_AXI_AWBURST        ( 2'b01                                              ),  
-        .S04_AXI_AWLOCK         ( 1'b0                                               ),  
-        .S04_AXI_AWCACHE        ( 4'b0                                               ),  
-        .S04_AXI_AWPROT         ( 3'b0                                               ),  
-        .S04_AXI_AWQOS          ( 4'b0                                               ),  
-        .S04_AXI_AWVALID        ( axi_awvalid[4]                                     ),  
-        .S04_AXI_AWREADY        ( axi_awready[4]                                     ),  
-        .S04_AXI_WDATA          ( axi_wdata[(4 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),  
-        .S04_AXI_WSTRB          ( 64'hFFFFFFFFFFFFFFFF                               ),  
-        .S04_AXI_WLAST          ( axi_wlast[4]                                       ),  
-        .S04_AXI_WVALID         ( axi_wvalid[4]                                      ),  
-        .S04_AXI_WREADY         ( axi_wready[4]                                      ),  
-        .S04_AXI_BID            ( axi_bid[(4 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),  
-        .S04_AXI_BRESP          ( axi_bresp[(4 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),  
-        .S04_AXI_BVALID         ( axi_bvalid[4]                                      ),  
-        .S04_AXI_BREADY         ( axi_bready[4]                                      ),  
-        .S04_AXI_ARID           ( 1'b1                                               ),         
-        .S04_AXI_ARADDR         ( axi_araddr[(4 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]   ),  
-        .S04_AXI_ARLEN          ( axi_arlen[(4 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]      ),  
-        .S04_AXI_ARSIZE         ( 3'b110                                             ),  
-        .S04_AXI_ARBURST        ( 2'b01                                              ),  
-        .S04_AXI_ARLOCK         ( 1'b0                                               ),  
-        .S04_AXI_ARCACHE        ( 4'b0                                               ),  
-        .S04_AXI_ARPROT         ( 3'b0                                               ),  
-        .S04_AXI_ARQOS          ( 4'b0                                               ),  
-        .S04_AXI_ARVALID        ( axi_arvalid[4]                                     ),
-        .S04_AXI_ARREADY        ( axi_arready[4]                                     ),
-        .S04_AXI_RID            ( axi_rid[(4 * `AXI_ID_WTH) +: `AXI_ID_WTH]          ),        
-        .S04_AXI_RDATA          ( axi_rdata[(4 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]    ),
-        .S04_AXI_RRESP          ( axi_rresp[(4 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]    ),
-        .S04_AXI_RLAST          ( axi_rlast[4]                                       ),
-        .S04_AXI_RVALID         ( axi_rvalid[4]                                      ),
-        .S04_AXI_RREADY         ( axi_rready[4]                                      ),
-        // BEGIN ----------------------------------------------------------------------------------------------------------------------------------------
-        .M00_AXI_ARESET_OUT_N   (                                                    ),
-        .M00_AXI_ACLK           ( c0_ddr4_clk                                        ),        
-        .M00_AXI_AWID           ( c0_ddr4_s_axi_awid                                 ),     
-        .M00_AXI_AWADDR         ( c0_ddr4_s_axi_awaddr                               ),      
-        .M00_AXI_AWLEN          ( c0_ddr4_s_axi_awlen                                ),      
-        .M00_AXI_AWSIZE         ( c0_ddr4_s_axi_awsize                               ),      
-        .M00_AXI_AWBURST        ( c0_ddr4_s_axi_awburst                              ),      
-        .M00_AXI_AWLOCK         (                                                    ),      
-        .M00_AXI_AWCACHE        (                                                    ),      
-        .M00_AXI_AWPROT         (                                                    ),      
-        .M00_AXI_AWQOS          (                                                    ),      
-        .M00_AXI_AWVALID        ( c0_ddr4_s_axi_awvalid                              ),      
-        .M00_AXI_AWREADY        ( c0_ddr4_s_axi_awready                              ),      
-        .M00_AXI_WDATA          ( c0_ddr4_s_axi_wdata                                ),      
-        .M00_AXI_WSTRB          ( c0_ddr4_s_axi_wstrb                                ),      
-        .M00_AXI_WLAST          ( c0_ddr4_s_axi_wlast                                ),      
-        .M00_AXI_WVALID         ( c0_ddr4_s_axi_wvalid                               ),      
-        .M00_AXI_WREADY         ( c0_ddr4_s_axi_wready                               ),      
-        .M00_AXI_BID            ( c0_ddr4_s_axi_bid                                  ),      
-        .M00_AXI_BRESP          ( c0_ddr4_s_axi_bresp                                ),      
-        .M00_AXI_BVALID         ( c0_ddr4_s_axi_bvalid                               ),      
-        .M00_AXI_BREADY         ( c0_ddr4_s_axi_bready                               ),      
-        .M00_AXI_ARID           ( c0_ddr4_s_axi_arid                                 ),      
-        .M00_AXI_ARADDR         ( c0_ddr4_s_axi_araddr                               ),      
-        .M00_AXI_ARLEN          ( c0_ddr4_s_axi_arlen                                ),      
-        .M00_AXI_ARSIZE         ( c0_ddr4_s_axi_arsize                               ),      
-        .M00_AXI_ARBURST        ( c0_ddr4_s_axi_arburst                              ),      
-        .M00_AXI_ARLOCK         (                                                    ),
-        .M00_AXI_ARCACHE        (                                                    ),
-        .M00_AXI_ARPROT         (                                                    ),
-        .M00_AXI_ARQOS          (                                                    ),
-        .M00_AXI_ARVALID        ( c0_ddr4_s_axi_arvalid                              ),
-        .M00_AXI_ARREADY        ( c0_ddr4_s_axi_arready                              ),
-        .M00_AXI_RID            ( c0_ddr4_s_axi_rid                                  ),
-        .M00_AXI_RDATA          ( c0_ddr4_s_axi_rdata                                ),
-        .M00_AXI_RRESP          ( c0_ddr4_s_axi_rresp                                ),
-        .M00_AXI_RLAST          ( c0_ddr4_s_axi_rlast                                ),
-        .M00_AXI_RVALID         ( c0_ddr4_s_axi_rvalid                               ),
-        .M00_AXI_RREADY         ( c0_ddr4_s_axi_rready                               ) 
-    );
-
-    /*
-    Sys_intf sys_intf (
-        .clk        ( clk_FAS               )
-    );
+   
+    
+    logic [4:0]                                   axi_rlast_d         ;
     
     
-    logic [4:0]                                   rlast_d         ;
-    
-    
-    genvar g0; generate for(g0 = 0; g0 < 5; g0 = g0 + 1) begin: AXI_INTF
+    genvar g0; for(g0 = 0; g0 < 5; g0 = g0 + 1) begin
         SRL_bit #(
             .C_CLOCK_CYCLES ( 1 )
         )
-        i0_SRL_bit (
-            .clk        ( clk_FAS           ),
+        iX_SRL_bit (
+            .clk        ( c0_ddr4_clk           ),
             .ce         ( 1'b1              ),
             .rst        ( sys_rst           ),
             .data_in    ( axi_rlast[g0]      ),
-            .data_out   ( rlast_d[g0]       )
-        );
-    
-        AXI_intf
-        i0_axi_intf (
-            .clk			( clk_FAS                                               ),
-            .ce             ( ce                                                    ),
-            .rst            ( sys_rst                                               ),
-            // AXI Write Address Ports 
-            .awaddr		    ( axi_awaddr[(g0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),	// Write address
-            .awlen		    ( axi_awlen[(g0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),	// Write Burst Length
-            .awvalid		( axi_awvalid[g0]                                        ),	// Write address valid
-            .awready		( axi_awready[g0]                                        ),	// Wrire address is ready
-            // AXI write data channel signals
-            .wdata		    ( axi_wdata[(g0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),	// Write data
-            .wlast		    ( axi_wlast[g0]                                          ),	// Last write transaction   
-            .wvalid		    ( axi_wvalid[g0]                                         ),	// Write valid  	
-            .wready		    ( axi_wready[g0]                                         ),	// Write data ready
-            // AXI write response channel signals
-            .bresp		    ( axi_bresp[(g0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),	// Write response
-            .bvalid		    ( axi_bvalid[g0]                                         ),	// Write reponse valid
-            .bready		    ( axi_bready[g0]                                         ),  // Response ready
-            // AXI read address channel signals
-            .araddr		    ( axi_araddr[(g0 * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH]      ),  // Read address
-            .arlen		    ( axi_arlen[(g0 * `AXI_LEN_WTH) +: `AXI_LEN_WTH]         ),  // Read Burst Length
-            .arvalid		( axi_arvalid[g0]                                        ),  // Read address valid  
-            .arready		( axi_arready[g0]                                        ),  // Read address ready
-            // AXI read data channel signals   
-            // .rid_m          ( c0_ddr4_s_axi_rid                                      ),  // Read ID        
-            .rdata		    ( axi_rdata[(g0 * `AXI_DATA_WTH) +: `AXI_DATA_WTH]       ),  // Read data
-            .rresp		    ( axi_rresp[(g0 * `AXI_RESP_WTH) +: `AXI_RESP_WTH]       ),  // Read response
-            .rlast_d	    ( rlast_d[g0]                                            ),  // Read last
-            .rvalid		    ( axi_rvalid[g0]                                         ),  // Read reponse valid
-            .rready		    ( axi_rready[g0]                                         )   // Read Response ready      
-        );
-        
-        assign axi_intf[g0] = example_top.AXI_INTF[g0].i0_axi_intf;
-        
-    end endgenerate
-    */
-
-
-    integer idx = 0;
-    initial begin
-        // resetIntf(axi_intf);
-        // fork
-        //     axi_drvr(0, "./memTrace_0_im.txt", axi_intf[0], 48336, sys_intf);
-        //     // axi_drvr(1, "./memTrace_0_om.txt", axi_intf[1], 261187, sys_intf);
-        //     // axi_drvr(2, "./memTrace_0_pm.txt", axi_intf[2], 1444361, sys_intf);
-        //     // axi_drvr(3, "./memTrace_0_pv.txt", axi_intf[3], , sys_intf);
-        //     // axi_drvr(4, "./memTrace_0_rm.txt", axi_intf[4], 197828, sys_intf);
-        // join_none
-        $timeformat(-12, 2, " ps", 20);
-        // c0_ddr4_s_axi_arid = 0;
-        // c0_ddr4_s_axi_araddr = 0;
-        // c0_ddr4_s_axi_arlen = 0;
-        // c0_ddr4_s_axi_arvalid = 0;
-        // c0_ddr4_s_axi_arburst = 0;
-        // c0_ddr4_s_axi_arsize = 0;
-        // c0_ddr4_s_axi_rready = 0;
-        // c0_ddr4_s_axi_awvalid = 0;
-        // c0_ddr4_s_axi_awaddr = 0;
-        // c0_ddr4_s_axi_awid = 0;
-        // c0_ddr4_s_axi_awburst = 0;
-        // c0_ddr4_s_axi_awsize = 0;
-        // c0_ddr4_s_axi_awlen = 0;
-        // c0_ddr4_s_axi_wvalid = 0;
-        // c0_ddr4_s_axi_wstrb = 0;
-        // c0_ddr4_s_axi_wdata = 0;
-        // c0_ddr4_s_axi_bready = 0;
-        // c0_ddr4_s_axi_wlast = 0;
-        // forever begin
-        //     @(posedge c0_sys_clk_p);
-        //     if(c0_init_calib_complete == 1 && c0_ddr4_reset_n == 1) begin
-        //         break;
-        //     end
-        // end
-        // forever begin
-        //     @(posedge c0_ddr4_clk);
-        //     if(c0_ddr4_s_axi_arready == 1) begin
-        //         break;
-        //     end
-        // end
-        // @(posedge c0_ddr4_clk);
-        // c0_ddr4_s_axi_arid = 0;
-        // c0_ddr4_s_axi_araddr = 3072;
-        // c0_ddr4_s_axi_arlen = 300;
-        // c0_ddr4_s_axi_arvalid = 1;
-        // c0_ddr4_s_axi_arburst = 1;
-        // c0_ddr4_s_axi_arsize = 6;
-        // c0_ddr4_s_axi_rready = 1;
-        // @(posedge c0_ddr4_clk);
-        // c0_ddr4_s_axi_araddr = 0;
-        // c0_ddr4_s_axi_arlen = 0;
-        // c0_ddr4_s_axi_arvalid = 0;
-        // c0_ddr4_s_axi_arburst = 0;
-        // c0_ddr4_s_axi_arsize = 0;
-        
-        
-
-        axi_araddr[(idx * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH] = 0;
-        axi_arlen[(idx * `AXI_LEN_WTH) +: `AXI_LEN_WTH] = 0;
-        axi_arvalid[idx] = 0;
-        axi_rready[idx] = 0;
-        axi_awvalid[idx] = 0;
-        axi_awaddr[(idx * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH] = 0;
-        axi_awlen[(idx * `AXI_LEN_WTH) +: `AXI_LEN_WTH] = 0;
-        axi_wvalid[idx] = 0;
-        axi_wstrb = 0;
-        axi_wdata = 0;
-        axi_bready[idx] = 0;
-        axi_wlast[idx] = 0;
-        forever begin
-            @(posedge c0_sys_clk_p);
-            if(c0_init_calib_complete == 1 && c0_ddr4_reset_n == 1) begin
-                break;
-            end
-        end
-        forever begin
-            @(posedge c0_ddr4_clk);
-            if(c0_ddr4_s_axi_arready == 1) begin
-                break;
-            end
-        end
-        @(posedge c0_ddr4_clk);
-        axi_araddr[(idx * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH] = 3072;
-        axi_arlen[(idx * `AXI_LEN_WTH) +: `AXI_LEN_WTH] = 10;
-        axi_arvalid[idx] = 1;
-        axi_rready[idx] = 1;
-        @(posedge c0_ddr4_clk);
-        axi_araddr[(idx * `AXI_ADDR_WTH) +: `AXI_ADDR_WTH] = 0;
-        axi_arlen[(idx * `AXI_LEN_WTH) +: `AXI_LEN_WTH] = 0;
-        axi_arvalid[idx] = 0;
+            .data_out   ( axi_rlast_d[g0]       )
+        );       
     end
-    
-    
+
     assign ce = sys_rdy;   
     always@(posedge c0_sys_clk_p or sys_rst) begin
         if(sys_rst) begin
@@ -824,33 +454,86 @@ ddr4 u_ddr4
             sys_rdy <= 1;
         end
     end
+
+    assign c0_ddr4_s_axi_rready = 1;    
+    assign c0_ddr4_s_axi_bready = 1;
+    assign c0_ddr4_s_axi_wvalid = 1;
+    initial begin
+        resetIntf();
+        axi_drvr();
+        while(|trans_in_prog) begin
+            @(posedge c0_ddr4_s_clk);
+        end
+    end
+    
+    
+ 
 endmodule
 
 
-/*
-task resetIntf(virtual AXI_intf axi_intf[0:4]);
-    int i;
-    //---------------------------------------------------------------------------------------------    
-    for(i = 0; i < 5; i = i + 1) begin
-        axi_intf[i].rdAddr.arvalid <= 0;
-        axi_intf[i].rdAddr.araddr  <= 0;
-        axi_intf[i].rdAddr.arlen   <= 0; 
-        axi_intf[i].rdData.rready  <= 0;
-    end
-    for(i = 0; i < 5; i = i + 1) begin
-        axi_intf[i].wrAddr.awvalid <= 0;
-        axi_intf[i].wrAddr.awaddr  <= 0;
-        axi_intf[i].wrAddr.awlen   <= 0; 
-        axi_intf[i].wrData.wvalid  <= 0;
-        axi_intf[i].wrData.wlast   <= 0;
-        axi_intf[i].resp.bready    <= 0;
-    end
+task resetIntf();
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_arvalid = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_araddr  = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_arlen   = 0; 
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_rready  = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_awvalid = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_awaddr  = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_awlen   = 0; 
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_wvalid  = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_wlast   = 0;
+    sim_tb_top.u_example_top.c0_ddr4_s_axi_bready  = 0;
 endtask: resetIntf
 
 
-task axi_drvr(int id, string fn, virtual AXI_intf axi_intf, shortreal trans_tot, virtual Sys_intf sys_intf);
-    integer fd;
-    shortreal trans_no;
+function axi_trans_t findMin(int idx0, axi_trans_t axi_trans_0, int idx1, axi_trans_t axi_trans_1);
+    axi_trans_t axi_trans;
+    if(axi_trans_0.ts <= axi_trans_1.ts) begin
+        axi_trans.id        = axi_trans_0.id;
+        axi_trans.fn        = axi_trans_0.fn;
+        axi_trans.op        = axi_trans_0.op;
+        axi_trans.dma_ref   = axi_trans_0.dma_ref;
+        axi_trans.ts        = axi_trans_0.td;
+        axi_trans.addr      = axi_trans_0.add;
+        axi_trans.len       = axi_trans_0.len;
+        axi_trans.minIdx    = id0;
+    end else begin
+        axi_trans.id        = axi_trans_1.id;
+        axi_trans.fn        = axi_trans_1.fn;
+        axi_trans.op        = axi_trans_1.op;
+        axi_trans.dma_ref   = axi_trans_1.dma_ref;       
+        axi_trans.ts        = axi_trans_1.td;
+        axi_trans.addr      = axi_trans_1.add;
+        axi_trans.len       = axi_trans_1.len;
+        axi_trans.minIdx    = id0;
+    end
+    return axi_trans;
+endfunction: findMax
+
+
+function automatic getTrans(ref integer fd_im, ref integer fd_pm, ref integer fd_rm, ref integer fd_om, ref axi_trans_t axi_trans[0:4]);
+    axi_trans_t axi_trans_ret0, axi_trans_ret1, axi_trans_ret2;
+    if(!$feof(fd_im) && axi_trans[0].id == -1) begin
+        $fscanf(fd_im, "%d,%d,%d,%d,%d\n", axi_trans[0].id, axi_trans[0].ts, axi_trans[0].op, axi_trans[0].addr, axi_trans[0].len);
+    end
+    if(!$feof(fd_pm) && axi_trans[1].id == -1) begin
+        $fscanf(fd_pm, "%d,%d,%d,%d,%d\n", axi_trans[1].id, axi_trans[1].ts, axi_trans[1].op, axi_trans[1].addr, axi_trans[1].len);
+    end
+    if(!$feof(fd_rm) && axi_trans[2].id == -1) begin
+        $fscanf(fd_rm, "%d,%d,%d,%d,%d\n", axi_trans[2].id, axi_trans[2].ts, axi_trans[2].op, axi_trans[2].addr, axi_trans[2].len);
+    end
+    if(!$feof(fd_om) && axi_trans[3].id == -1) begin
+        $fscanf(fd_om, "%d,%d,%d,%d,%d\n", axi_trans[3].id, axi_trans[3].ts, axi_trans[3].op, axi_trans[3].addr, axi_trans[3].len);
+    end
+    axi_trans_ret0 = findMin(0, axi_trans[0], 1, axi_trans[1]);
+    axi_trans_ret1 = findMin(2, axi_trans[2], 3, axi_trans[3]);
+    axi_trans_ret2 = findMin(axi_trans_ret0.minIdx, axi_trans_ret0, axi_trans_ret1.minIdx, axi_trans_ret1);
+    null_axi_trans(axi_trans[axi_trans_ret2.minIdx]);
+    return axi_trans_ret2;
+endfunction: getTrans
+
+
+task axi_drvr();
+    integer fd_im, fd_pm, fd_rm, fd_om;
     int time_delta;
     int op;
     time addr;
@@ -858,102 +541,160 @@ task axi_drvr(int id, string fn, virtual AXI_intf axi_intf, shortreal trans_tot,
     int len;
     int prog_factor;
     int perct;
+    longint t_ofst;
+    longint time_delta;
+    
+    // 48336
+    // 261187
+    // 1444361
+    // 197828
+    axi_trans_t axi_trans[0:3];
+    axi_trans_t axi_trans_sel;
     //---------------------------------------------------------------------------------------------
-    fd = $fopen(fn, "r");
+    t_ofst = $time;
+    fd_im = -1; fd_pm = -1; fd_rm = -1; fd_om = -1;
+    fd_im = $fopen(fn, "./memTrace_0_im.txt"); fd_pm = $fopen(fn, "./memTrace_0_pm.txt");
+    fd_rm = $fopen(fn, "./memTrace_0_rm.txt"); fd_om = $fopen(fn, "./memTrace_0_om.txt");
     prog_factor = 10;
     onehnrd = 100.0;
+    
+    null_axi_trans(axi_trans[0]); null_axi_trans(axi_trans[1]);
+    null_axi_trans(axi_trans[2]); null_axi_trans(axi_trans[3]);
+
     forever begin
-        @(axi_intf.clk);
-        if(!axi_intf.rst && axi_intf.ce) begin
+        @(posedge clk);
+        if(!sim_tb_top.u_example_top.sys_rst && sim_tb_top.u_example_top.ce) begin
             break;
         end
     end
-    while(!$feof(fd)) begin
-        $fscanf(fd, "%d,%d,%d,%d,%d\n", trans_no, time_delta, op, addr, len);
-        time_delta = 0;
-        repeat(time_delta) @(sys_intf.clk);
-        if(op == 0) begin
-            axi_rd(id, fn, trans_no, addr, len, axi_intf);
+    
+    while(fd_im != -1 && fd_pm != -1 && fd_rm != -1 && fd_om != -1) begin 
+        axi_trans_sel = getTrans(axi_trans);
+        t_ofst
+        time_delta = axi_trans.ts - ($time - t_ofst);
+        time_delta = 0; // DEBUG
+        repeat(time_delta) @(posedge clk);        
+        if(axi_trans_sel.op == 0) begin // READ
+            axi_schd_rd(axi_trans_sel);
         end else begin // WRITE
-            axi_wr(id, fn, trans_no, addr, len, axi_intf);
-        end       
+            axi_schd_wr(axi_trans_sel);
+        end
+        if($feof(fd_im)) $fclose(fd_im); fd_im = -1;
+        if($feof(fd_pm)) $fclose(fd_pm); fd_pm = -1;
+        if($feof(fd_rm)) $fclose(fd_rm); fd_rm = -1;
+        if($feof(fd_om)) $fclose(fd_om); fd_om = -1;      
         perct = $floor((trans_no / trans_tot) * onehnrd);
         if(perct >= prog_factor && perct > 0) begin
             prog_factor = prog_factor + 10;
             $display("finished %d / %d transactions", trans_no, trans_tot);
         end
     end
-    $fclose(fd);
 endtask: axi_drvr
 
 
-task axi_rd(int id, string fn, int trans_no, logic[31:0] addr, logic[7:0] len, virtual AXI_intf axi_intf);
+function automatic null_axi_trans(ref axi_trans_t axi_trans);
+    axi_trans.id = -1;
+    axi_trans.fn = "";
+    axi_trans.dma_ref = -1;
+    axi_trans.op = "";
+    axi_trans.ts = -1;
+    axi_trans.addr = -1;
+    axi_trans.len = -1;
+endfunction: null_axi_trans
+
+
+task axi_schd_rd(axi_trans_t axi_trans);
+    logic clk;
+    logic axi_arready;    
+    //---------------------------------------------------------------------------------------------
+    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
+    assign axi_arready = sim_tb_top.u_example_top.c0_ddr4_s_axi_arready;    
     forever begin
-        @(axi_intf.clk);
-        if(axi_intf.rdAddr.arready) begin
+        @(posedge clk);
+        if(axi_arready == 1) begin
             break;
         end
     end
-    @(axi_intf.clk);
-    axi_intf.rdAddr.arvalid <= 1;
-    axi_intf.rdAddr.araddr  <= addr;
-    axi_intf.rdAddr.arlen   <= len; 
-    axi_intf.rdData.rready  <= 1;
-    @(axi_intf.clk);
-    $display("[AXI_READ STARTED]: %s Transaction No. %d", fn, trans_no);
-    $display("\taddress: %d", addr);
-    $display("\tlength:  %d", len);
-    axi_intf.rdAddr.arvalid <= 0;
-    axi_intf.rdAddr.araddr  <= 0;
-    axi_intf.rdAddr.arlen   <= 0;
+    @(posedge clk);
+    axi_arvalid <= 1;
+    axi_araddr  <= axi_trans.addr;
+    axi_arlen   <= axi_trans.len; 
+    $display("[AXI_READ STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.trans_no);
+    $display("\taddress: %d", axi_trans.addr);
+    $display("\tlength:  %d", axi_trans.len);
+    axi_arvalid <= 0;
+    axi_araddr  <= 0;
+    axi_arlen   <= 0;    
+    fork
+        axi_wait_rd_cmpl(id, fn);
+    join_none    
+endtask: axi_schd_rd
+
+
+task axi_schd_wr(axi_trans_t axi_trans);
+    logic clk;
+    logic axi_awready;    
+    //---------------------------------------------------------------------------------------------
+    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
+    assign axi_awready = sim_tb_top.u_example_top.c0_ddr4_s_axi_awready;    
     forever begin
-        @(axi_intf.clk);
-        if(axi_intf.rlast_d && axi_intf.rid_m == id) begin
+        @(posedge clk);
+        if(axi_awready == 1) begin
+            break;
+        end
+    end
+    $display("[AXI WRITE STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.trans_no);
+    $display("\taddress: %d", axi_trans.addr);
+    $display("\tlength: %d", axi_trans.len);    
+    fork
+        axi_wait_wr_cmpl(axi_trans);
+    join_none
+endtask: axi_schd_wr
+
+
+task axi_wait_rd_cmpl(axi_trans_t axi_trans);
+    logic clk;
+    logic axi_rlast_d;
+    logic axi_rid;
+    //---------------------------------------------------------------------------------------------
+    trans_in_prog[axi_trans.dma_ref] = 1;
+    assign clk          = sim_tb_top.u_example_top.c0_ddr4_clk;
+    assign axi_rlast_d  = sim_tb_top.u_example_top.axi_rlast_d;
+    assign axi_rid      = sim_tb_top.u_example_top.c0_ddr4_s_axi_rid;
+    forever begin
+        @(posedge clk);
+        if(axi_rlast_d && axi_trans.id == axi_rid) begin
             $display("[AXI READ FINISHED]: %s Transaction No. %d", fn, trans_no);
             break;
         end
     end
-    @(axi_intf.clk);
-    axi_intf.rdData.rready  <= 0;
-endtask: axi_rd
+    trans_in_prog[axi_trans.dma_ref] = 0;
+endtask: axi_wait_rd_cmpl
 
 
-task axi_wr(int id, string fn, int trans_no, logic[31:0] addr, logic[7:0] len, virtual AXI_intf axi_intf); 
-    int i;
+task axi_wait_wr_cmpl(axi_trans_t axi_trans);
+    logic clk;
+    logic axi_wlast;
+    //---------------------------------------------------------------------------------------------
+    trans_in_prog[axi_trans.dma_ref] = 1;
+    assign clk          = sim_tb_top.u_example_top.c0_ddr4_clk;
+    assign axi_wlast    = sim_tb_top.u_example_top.c0_ddr4_s_axi_wlast;
+    assign axi_bvalid   = sim_tb_top.u_example_top.c0_ddr4_s_axi_bvalid;
     forever begin
-        @(axi_intf.clk);
-        if(axi_intf.wrAddr.awready) begin
-            break;
-        end
-    end
-    i = 0;
-    @(axi_intf.clk);
-    axi_intf.wrAddr.awvalid <= 1;
-    axi_intf.wrAddr.awaddr  <= addr;
-    axi_intf.wrAddr.awlen   <= len; 
-    axi_intf.wrData.wvalid  <= 1;
-    axi_intf.resp.bready    <= 1;
-    @(axi_intf.clk);
-    $display("[AXI WRITE STARTED]: %s Transaction No. %d", fn, trans_no);
-    $display("\taddress: %d", addr);
-    $display("\tlength: %d", len);
-    axi_intf.wrAddr.awvalid <= 0;
-    axi_intf.wrAddr.awaddr  <= 0;
-    axi_intf.wrAddr.awlen   <= 0;
-    forever begin
-        @(axi_intf.clk);
-        if(i == (len - 1)) begin
-            axi_intf.wrData.wlast <= 1;
-        end
-        if(axi_intf.resp.bvalid) begin
-            $display("[AXI WRITE FINISHED]: %s Transaction No. %d", fn, trans_no);
-            break;
+        @(posedge clk); 
+        if(i == (axi_trans.len - 1)) begin
+            axi_wlast = 1;
         end
         i = i + 1;
     end
-    @(axi_intf.clk);
-    axi_intf.wrData.wlast   <= 0;
-    axi_intf.resp.bready    <= 0;
-    axi_intf.wrData.wvalid  <= 0;
-endtask: axi_wr
-*/
+    axi_wlast = 0;
+    forever begin
+        @(posedge clk);   
+        if(axi_bvalid) begin
+            $display("[AXI WRITE FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
+            break;
+        end
+    end
+    trans_in_prog[axi_trans.dma_ref] = 0;
+endtask: axi_wait_wr_cmpl
+

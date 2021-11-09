@@ -30,7 +30,6 @@ interface AXI_intf
     arvalid		    ,   // Read address valid     
     arready		    ,   // Read address ready
     // AXI read data channel signals
-    rid_m           ,
     rdata		    ,   // Read data
     rresp		    ,   // Read response
     rlast_d		    ,   // Read last
@@ -70,7 +69,6 @@ interface AXI_intf
  	output logic                            arvalid		    ;   // Read address valid  
 	input  logic                            arready		    ;   // Read address ready
 	// AXI read data channel signals   
-    input  logic [                 3:0]     rid_m           ;
     input  logic [ `AXI_DATA_WTH - 1:0]     rdata		    ;   // Read data
 	input  logic [ `AXI_RESP_WTH - 1:0]     rresp		    ;   // Read response
 	input  logic                            rlast_d		    ;   // Read last
