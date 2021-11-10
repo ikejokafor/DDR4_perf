@@ -12,6 +12,5 @@ vopt -64 +acc -l elaborate.log \
     -L unimacro_ver \
     -L secureip \
     -L accel_infst_common \
-    -L axi_interconnect_v1_7_17 \
-    -work work work.sim_tb_top work.glbl -o sim_tb_top_opt
+    -work xil_defaultlib xil_defaultlib.sim_tb_top xil_defaultlib.glbl -o sim_tb_top_opt
 

@@ -83,7 +83,9 @@
 `endif
 
 
-`include "axi_defs.svh"
+`define AXI_INTF    sim_tb_top.u_example_top
+`define TOP         sim_tb_top.u_example_top
+
 
 typedef struct {
     time id;
@@ -97,10 +99,18 @@ typedef struct {
 } axi_trans_t;
 
 
-
-`define AXI_INTF sim_tb_top.u_example_top
-`define TOP sim_tb_top.u_example_top
-
+function string get_time();
+    int file_pointer;
+    //Stores time and date to file sys_time
+    void'($system("date > ./sys_time"));
+    //Open the file sys_time with read access
+    file_pointer = $fopen("./sys_time", "r");
+    //assin the value from file to variable
+    void'($fgets(get_time, file_pointer));
+    //close the file
+    $fclose(file_pointer);
+    void'($system("rm ./sys_time"));
+endfunction: get_time
 
 
 `timescale 1ps/1ps
@@ -394,6 +404,7 @@ ddr4 u_ddr4
         while(|trans_in_prog) begin
             @(posedge c0_ddr4_clk);
         end
+        $stop;
     end
 endmodule
 
@@ -493,16 +504,16 @@ endfunction: postLoop
 
 
 task axi_drvr();
-    integer fd_im, fd_pm, fd_rm, fd_om;
+    integer fd, fd_im, fd_pm, fd_rm, fd_om;
     shortreal trans_no;
     shortreal trans_tot;  
     shortreal onehnrd;
-    shortreal three1000;
+    real three1000;
     int prog_factor;
     int perct;
     real t_ofst;
     real time_delta;
-    logic clk;
+    string cur_time;
     // ./memTrace_0_im.txt 48336
     // ./memTrace_0_om.txt 246657
     // ./memTrace_0_pm.txt 1444361
@@ -510,8 +521,6 @@ task axi_drvr();
     axi_trans_t axi_trans_arr[0:3];
     axi_trans_t axi_trans;
     //---------------------------------------------------------------------------------------------
-    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
-
     fd_im = -1; fd_pm = -1; fd_rm = -1; fd_om = -1;
     fd_im = $fopen("./memTrace_0_im.txt", "r"); fd_pm = $fopen("./memTrace_0_pm.txt", "r");
     fd_rm = $fopen("./memTrace_0_rm.txt", "r"); fd_om = $fopen("./memTrace_0_om.txt", "r");
@@ -526,19 +535,24 @@ task axi_drvr();
     `TOP.trans_in_prog = 0;
 
     forever begin
-        @(posedge clk);
+        @(posedge `TOP.c0_ddr4_clk);
         if(!sim_tb_top.u_example_top.sys_rst && sim_tb_top.u_example_top.ce) begin
             break;
         end
     end
     t_ofst = real'($time);
     
+    fd = $fopen("./start.txt", "w");
+    cur_time = get_time();
+    $fdisplay(fd, "%s\n", cur_time);
+    $fclose(fd);
+    fd = $fopen("./progress.txt", "w");
+    $fclose(fd);
     while(fd_im != -1 && fd_pm != -1 && fd_rm != -1 && fd_om != -1) begin
-        @(posedge clk);
+        @(posedge `TOP.c0_ddr4_clk);
         axi_trans = getTrans(fd_im, fd_pm, fd_rm, fd_om, axi_trans_arr);
-        time_delta = $floor((axi_trans.ts - ($time - t_ofst)) / three1000);
-        time_delta = 0;
-        repeat(time_delta) @(posedge clk);        
+        time_delta = axi_trans.ts - $floor((real'($time) - t_ofst) / three1000);
+        repeat(time_delta) @(posedge `TOP.c0_ddr4_clk);        
         if(axi_trans.op == 0) begin // READ
             axi_schd_rd(axi_trans);
         end else begin // WRITE
@@ -549,9 +563,17 @@ task axi_drvr();
         if(perct >= prog_factor && perct > 0) begin
             prog_factor = prog_factor + 10;
             $display("finished %d / %d transactions", trans_no, trans_tot);
+            fd = $fopen("./progress.txt", "a");
+            cur_time = get_time();
+            $fdisplay(fd, "finished %d / %d transactions at %s\n", trans_no, trans_tot, cur_time);
+            $fclose(fd);
         end
         trans_no = trans_no + 1;
     end
+    fd = $fopen("./end.txt", "w");
+    cur_time = get_time();
+    $fdisplay(fd, "%s\n", cur_time);
+    $fclose(fd);
 endtask: axi_drvr
 
 
@@ -623,7 +645,7 @@ task axi_wait_rd_cmpl(axi_trans_t axi_trans);
     @(posedge `AXI_INTF.c0_ddr4_clk);
     `AXI_INTF.axi_rready[axi_trans.dma_ref]  = 1;  
     `TOP.trans_in_prog[axi_trans.dma_ref] = 1;
-    while(i < axi_trans.len)  begin
+    while(i <= axi_trans.len)  begin
         @(posedge `AXI_INTF.c0_ddr4_clk); 
         if(`AXI_INTF.c0_ddr4_s_axi_rvalid && `AXI_INTF.c0_ddr4_s_axi_rid == axi_trans.dma_ref) begin
             i = i + 1;
@@ -646,20 +668,18 @@ task axi_wait_wr_cmpl(axi_trans_t axi_trans);
     int i;
     //---------------------------------------------------------------------------------------------
     @(posedge `AXI_INTF.c0_ddr4_clk);
-    `AXI_INTF.c0_ddr4_s_axi_wvalid  = 1;  
+    `AXI_INTF.c0_ddr4_s_axi_wvalid = 1;  
     `TOP.trans_in_prog[axi_trans.dma_ref] = 1;
     i = 0;
-    while(i < axi_trans.len)  begin
+    while(i <= axi_trans.len)  begin
         @(posedge `AXI_INTF.c0_ddr4_clk);
+        if(i == axi_trans.len) begin
+            `AXI_INTF.c0_ddr4_s_axi_wlast = 1;
+        end
         if(`AXI_INTF.c0_ddr4_s_axi_wvalid && `AXI_INTF.c0_ddr4_s_axi_wready) begin
             i = i + 1;
         end
-        if(i == (axi_trans.len - 1)) begin
-            
-        end
     end
-    @(posedge `AXI_INTF.c0_ddr4_clk);
-    `AXI_INTF.c0_ddr4_s_axi_wlast = 1;
     @(posedge `AXI_INTF.c0_ddr4_clk);
     `AXI_INTF.c0_ddr4_s_axi_wlast  = 0;    
     `AXI_INTF.c0_ddr4_s_axi_wvalid = 0;
