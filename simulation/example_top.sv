@@ -83,19 +83,23 @@
 `endif
 
 
+`include "axi_defs.svh"
+
 typedef struct {
-    int id;
+    time id;
     string fn;
-    string op;
-    longint ts;
+    int op;
+    real ts;
     int dma_ref;
-    logic [`AXI_ADDR_WTH:0] addr;
-    logic [`AXI_LEN_WTH:0] len;
+    time addr;
+    time len;
     int minIdx;
 } axi_trans_t;
 
 
-logic [0:3] trans_in_prog;
+
+`define AXI_INTF sim_tb_top.u_example_top
+`define TOP sim_tb_top.u_example_top
 
 
 
@@ -153,7 +157,6 @@ module example_top #
     //  Includes
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     `include "math.svh"
-    `include "axi_defs.svh"
 
 
   localparam  APP_ADDR_WIDTH = 29;
@@ -163,57 +166,12 @@ module example_top #
   localparam ECC                   = "ON";
   localparam C_PERIOD_83MHz = 12; 
 
-    localparam C_NUM_TOTAL_CLIENTS      = 5;
-    
-    localparam C_AXI_ID_WTH             = C_NUM_TOTAL_CLIENTS * `AXI_ID_WTH;
-    localparam C_AXI_ADDR_WTH           = C_NUM_TOTAL_CLIENTS * `AXI_ADDR_WTH;
-    localparam C_AXI_LEN_WTH            = C_NUM_TOTAL_CLIENTS * `AXI_LEN_WTH;
-    localparam C_AXI_DATA_WTH           = C_NUM_TOTAL_CLIENTS * `AXI_DATA_WTH;
-    localparam C_AXI_RESP_WTH           = C_NUM_TOTAL_CLIENTS * `AXI_RESP_WTH;
-    localparam C_AXI_BR_WTH             = C_NUM_TOTAL_CLIENTS * `AXI_BR_WTH;    
-    localparam C_AXI_SZ_WTH             = C_NUM_TOTAL_CLIENTS * `AXI_SZ_WTH;
-    localparam C_AXI_WSTRB_WTH          = C_NUM_TOTAL_CLIENTS * `AXI_WSTRB_WTH;
-    
 
 
 
     //-----------------------------------------------------------------------------------------------------------------------------------------------
     // Local Variables
     //-----------------------------------------------------------------------------------------------------------------------------------------------
- 	// AXI Write Address Ports   
-    logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_awready		 ;	// Wrire address is ready
-	logic [       C_AXI_ID_WTH - 1:0]  	 axi_awid		     ;	// Write ID
-	logic [     C_AXI_ADDR_WTH - 1:0]  	 axi_awaddr		     ;	// Write address
-	logic [      C_AXI_LEN_WTH - 1:0]  	 axi_awlen		     ;	// Write Burst Length
-	logic [       C_AXI_SZ_WTH - 1:0]  	 axi_awsize		     ;	// Write Burst size
-	logic [       C_AXI_BR_WTH - 1:0]  	 axi_awburst		 ;	// Write Burst type
-	logic [C_NUM_TOTAL_CLIENTS - 1:0] 	 axi_awvalid		 ;	// Write address valid
-	// AXI write data channel signals
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]	 axi_wready		     ;	// Write data ready
-	logic [     C_AXI_DATA_WTH - 1:0]  	 axi_wdata		     ;	// Write data
-	logic [    C_AXI_WSTRB_WTH - 1:0]  	 axi_wstrb		     ;	// Write strobes
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]	 axi_wlast		     ;	// Last write transaction   
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]	 axi_wvalid		     ;	// Write valid  
-	// AXI write response channel signals
-	logic [       C_AXI_ID_WTH - 1:0]  	 axi_bid			 ;	// Response ID
-	logic [     C_AXI_RESP_WTH - 1:0]  	 axi_bresp		     ;	// Write response
-	logic [C_NUM_TOTAL_CLIENTS - 1:0] 	 axi_bvalid		     ;	// Write reponse valid
-	logic [C_NUM_TOTAL_CLIENTS - 1:0] 	 axi_bready		     ;	// Response ready
-	// AXI read address channel signals
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_arready		 ;   // Read address ready
-	logic [       C_AXI_ID_WTH - 1:0]    axi_arid		     ;	// Read ID
-	logic [     C_AXI_ADDR_WTH - 1:0]    axi_araddr		     ;   // Read address
-	logic [      C_AXI_LEN_WTH - 1:0]    axi_arlen		     ;   // Read Burst Length
-	logic [       C_AXI_SZ_WTH - 1:0]    axi_arsize		     ;   // Read Burst size
-	logic [       C_AXI_BR_WTH - 1:0]    axi_arburst		 ;   // Read Burst type
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_arvalid		 ;   // Read address valid 
-	// AXI read data channel signals   
-	logic [       C_AXI_ID_WTH - 1:0]    axi_rid			 ;   // Response ID
-	logic [     C_AXI_DATA_WTH - 1:0]    axi_rdata		     ;   // Read data
-	logic [     C_AXI_RESP_WTH - 1:0]    axi_rresp		     ;   // Read response
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_rlast		     ;   // Read last
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_rvalid		     ;   // Read reponse valid
-	logic [C_NUM_TOTAL_CLIENTS - 1:0]    axi_rready		     ;   // Read Response ready
 
     logic                                ce                  ;
     logic                                sys_rdy             ;
@@ -234,6 +192,7 @@ module example_top #
   logic                  c0_ddr4_rst;
   logic                  dbg_clk;
   logic                  c0_wr_rd_complete;
+  logic [0:3]           trans_in_prog;
 
 
   reg                              c0_ddr4_aresetn;
@@ -248,42 +207,35 @@ module example_top #
   wire [1:0]                       c0_ddr4_tg_data_err_status;
 
   // Slave Interface Write Address Ports
-  wire [3:0]      c0_ddr4_s_axi_awid;
-  wire [31:0]    c0_ddr4_s_axi_awaddr;
-  wire [7:0]                       c0_ddr4_s_axi_awlen;
-  wire [2:0]                       c0_ddr4_s_axi_awsize;
-  wire [1:0]                       c0_ddr4_s_axi_awburst;
-  wire [3:0]                       c0_ddr4_s_axi_awcache;
-  wire [2:0]                       c0_ddr4_s_axi_awprot;
-  wire                             c0_ddr4_s_axi_awvalid;
-  wire                             c0_ddr4_s_axi_awready;
+  logic [3:0]      c0_ddr4_s_axi_awid;
+  logic [31:0]    c0_ddr4_s_axi_awaddr;
+  logic [7:0]                       c0_ddr4_s_axi_awlen;
+  logic                             c0_ddr4_s_axi_awvalid;
+  logic                             c0_ddr4_s_axi_awready;
    // Slave Interface Write Data Ports
-  wire [511:0]    c0_ddr4_s_axi_wdata;
-  wire [63:0]  c0_ddr4_s_axi_wstrb;
-  wire                             c0_ddr4_s_axi_wlast;
-  wire                             c0_ddr4_s_axi_wvalid;
-  wire                             c0_ddr4_s_axi_wready;
+  logic [511:0]    c0_ddr4_s_axi_wdata;
+  logic [63:0]  c0_ddr4_s_axi_wstrb;
+  logic                             c0_ddr4_s_axi_wlast;
+  logic                             c0_ddr4_s_axi_wvalid;
+  logic                             c0_ddr4_s_axi_wready;
    // Slave Interface Write Response Ports
-  wire                             c0_ddr4_s_axi_bready;
-  wire [3:0]      c0_ddr4_s_axi_bid;
-  wire [1:0]                       c0_ddr4_s_axi_bresp;
-  wire                             c0_ddr4_s_axi_bvalid;
+  logic                             c0_ddr4_s_axi_bready;
+  logic [3:0]      c0_ddr4_s_axi_bid;
+  logic [1:0]                       c0_ddr4_s_axi_bresp;
+  logic                             c0_ddr4_s_axi_bvalid;
    // Slave Interface Read Address Ports
-  wire [3:0]      c0_ddr4_s_axi_arid;
-  wire [31:0]    c0_ddr4_s_axi_araddr;
-  wire [7:0]                       c0_ddr4_s_axi_arlen;
-  wire [2:0]                       c0_ddr4_s_axi_arsize;
-  wire [1:0]                       c0_ddr4_s_axi_arburst;
-  wire [3:0]                       c0_ddr4_s_axi_arcache;
-  wire                             c0_ddr4_s_axi_arvalid;
-  wire                             c0_ddr4_s_axi_arready;
+  logic [3:0]      c0_ddr4_s_axi_arid;
+  logic [31:0]    c0_ddr4_s_axi_araddr;
+  logic [7:0]                       c0_ddr4_s_axi_arlen;
+  logic                             c0_ddr4_s_axi_arvalid;
+  logic                             c0_ddr4_s_axi_arready;
    // Slave Interface Read Data Ports
-  wire                             c0_ddr4_s_axi_rready;
-  wire [3:0]      c0_ddr4_s_axi_rid;
-  wire [511:0]    c0_ddr4_s_axi_rdata;
-  wire [1:0]                       c0_ddr4_s_axi_rresp;
-  wire                             c0_ddr4_s_axi_rlast;
-  wire                             c0_ddr4_s_axi_rvalid;
+  logic                             c0_ddr4_s_axi_rready;
+  logic [3:0]      c0_ddr4_s_axi_rid;
+  logic [511:0]    c0_ddr4_s_axi_rdata;
+  logic [1:0]                       c0_ddr4_s_axi_rresp;
+  logic                             c0_ddr4_s_axi_rlast;
+  logic                             c0_ddr4_s_axi_rvalid;
 
   wire                             c0_ddr4_cmp_data_valid;
   wire [511:0]    c0_ddr4_cmp_data;     // Compare data
@@ -314,16 +266,7 @@ logic clk_FAS;
 //***************************************************************************
 
 
-    // clock_gen #(
-    //     .C_PERIOD(C_PERIOD_83MHz)
-    // )
-    // i0_clock_gen(
-    //     .clk_out(clk_FAS)
-    // );
-    // clk_conv1x1
-    // clk_conv3x3
-    
-    
+
 
   // user design top is one instance for all controllers
 ddr4 u_ddr4
@@ -380,8 +323,8 @@ ddr4 u_ddr4
   .c0_ddr4_s_axi_awid                  (c0_ddr4_s_axi_awid),
   .c0_ddr4_s_axi_awaddr                (c0_ddr4_s_axi_awaddr),
   .c0_ddr4_s_axi_awlen                 (c0_ddr4_s_axi_awlen),
-  .c0_ddr4_s_axi_awsize                (c0_ddr4_s_axi_awsize),
-  .c0_ddr4_s_axi_awburst               (c0_ddr4_s_axi_awburst),
+  .c0_ddr4_s_axi_awsize                (3'b110),
+  .c0_ddr4_s_axi_awburst               (2'b01),
   .c0_ddr4_s_axi_awlock                (1'b0),
   .c0_ddr4_s_axi_awcache               (4'b0),
   .c0_ddr4_s_axi_awprot                (3'b0),
@@ -390,7 +333,7 @@ ddr4 u_ddr4
   .c0_ddr4_s_axi_awready               (c0_ddr4_s_axi_awready),
   // Slave Interface Write Data Ports
   .c0_ddr4_s_axi_wdata                 (c0_ddr4_s_axi_wdata),
-  .c0_ddr4_s_axi_wstrb                 (c0_ddr4_s_axi_wstrb),
+  .c0_ddr4_s_axi_wstrb                 (64'hFFFFFFFFFFFFFFFF),
   .c0_ddr4_s_axi_wlast                 (c0_ddr4_s_axi_wlast),
   .c0_ddr4_s_axi_wvalid                (c0_ddr4_s_axi_wvalid),
   .c0_ddr4_s_axi_wready                (c0_ddr4_s_axi_wready),
@@ -403,8 +346,8 @@ ddr4 u_ddr4
   .c0_ddr4_s_axi_arid                  (c0_ddr4_s_axi_arid),
   .c0_ddr4_s_axi_araddr                (c0_ddr4_s_axi_araddr),
   .c0_ddr4_s_axi_arlen                 (c0_ddr4_s_axi_arlen),
-  .c0_ddr4_s_axi_arsize                (c0_ddr4_s_axi_arsize),
-  .c0_ddr4_s_axi_arburst               (c0_ddr4_s_axi_arburst),
+  .c0_ddr4_s_axi_arsize                (3'b110),
+  .c0_ddr4_s_axi_arburst               (2'b01),
   .c0_ddr4_s_axi_arlock                (1'b0),
   .c0_ddr4_s_axi_arcache               (4'b0),
   .c0_ddr4_s_axi_arprot                (3'b0),
@@ -430,22 +373,11 @@ ddr4 u_ddr4
 
    
     
-    logic [4:0]                                   axi_rlast_d         ;
     
-    
-    genvar g0; for(g0 = 0; g0 < 5; g0 = g0 + 1) begin
-        SRL_bit #(
-            .C_CLOCK_CYCLES ( 1 )
-        )
-        iX_SRL_bit (
-            .clk        ( c0_ddr4_clk           ),
-            .ce         ( 1'b1              ),
-            .rst        ( sys_rst           ),
-            .data_in    ( axi_rlast[g0]      ),
-            .data_out   ( axi_rlast_d[g0]       )
-        );       
-    end
 
+    logic [3:0] axi_rready;
+    assign c0_ddr4_s_axi_rready = axi_rready[0] | axi_rready[1] | axi_rready[2] | axi_rready[3];
+    
     assign ce = sys_rdy;   
     always@(posedge c0_sys_clk_p or sys_rst) begin
         if(sys_rst) begin
@@ -455,33 +387,33 @@ ddr4 u_ddr4
         end
     end
 
-    assign c0_ddr4_s_axi_rready = 1;    
-    assign c0_ddr4_s_axi_bready = 1;
-    assign c0_ddr4_s_axi_wvalid = 1;
+
     initial begin
         resetIntf();
         axi_drvr();
         while(|trans_in_prog) begin
-            @(posedge c0_ddr4_s_clk);
+            @(posedge c0_ddr4_clk);
         end
     end
-    
-    
- 
 endmodule
 
 
 task resetIntf();
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_arvalid = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_araddr  = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_arlen   = 0; 
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_rready  = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_awvalid = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_awaddr  = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_awlen   = 0; 
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_wvalid  = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_wlast   = 0;
-    sim_tb_top.u_example_top.c0_ddr4_s_axi_bready  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_arvalid = 0;
+    `AXI_INTF.c0_ddr4_s_axi_arid    = 0;
+    `AXI_INTF.c0_ddr4_s_axi_araddr  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_arlen   = 0;
+    `AXI_INTF.axi_rready[0]         = 0;
+    `AXI_INTF.axi_rready[1]         = 0; 
+    `AXI_INTF.axi_rready[2]         = 0; 
+    `AXI_INTF.axi_rready[3]         = 0;     
+    `AXI_INTF.c0_ddr4_s_axi_awvalid = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awid    = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awaddr  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awlen   = 0; 
+    `AXI_INTF.c0_ddr4_s_axi_wlast   = 0;
+    `AXI_INTF.c0_ddr4_s_axi_bready  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_wvalid  = 0;    
 endtask: resetIntf
 
 
@@ -492,37 +424,45 @@ function axi_trans_t findMin(int idx0, axi_trans_t axi_trans_0, int idx1, axi_tr
         axi_trans.fn        = axi_trans_0.fn;
         axi_trans.op        = axi_trans_0.op;
         axi_trans.dma_ref   = axi_trans_0.dma_ref;
-        axi_trans.ts        = axi_trans_0.td;
-        axi_trans.addr      = axi_trans_0.add;
+        axi_trans.ts        = axi_trans_0.ts;
+        axi_trans.addr      = axi_trans_0.addr;
         axi_trans.len       = axi_trans_0.len;
-        axi_trans.minIdx    = id0;
+        axi_trans.minIdx    = idx0;
     end else begin
         axi_trans.id        = axi_trans_1.id;
         axi_trans.fn        = axi_trans_1.fn;
         axi_trans.op        = axi_trans_1.op;
         axi_trans.dma_ref   = axi_trans_1.dma_ref;       
-        axi_trans.ts        = axi_trans_1.td;
-        axi_trans.addr      = axi_trans_1.add;
+        axi_trans.ts        = axi_trans_1.ts;
+        axi_trans.addr      = axi_trans_1.addr;
         axi_trans.len       = axi_trans_1.len;
-        axi_trans.minIdx    = id0;
+        axi_trans.minIdx    = idx1;
     end
     return axi_trans;
-endfunction: findMax
+endfunction: findMin
 
 
-function automatic getTrans(ref integer fd_im, ref integer fd_pm, ref integer fd_rm, ref integer fd_om, ref axi_trans_t axi_trans[0:4]);
-    axi_trans_t axi_trans_ret0, axi_trans_ret1, axi_trans_ret2;
-    if(!$feof(fd_im) && axi_trans[0].id == -1) begin
+function automatic axi_trans_t getTrans(ref integer fd_im, ref integer fd_pm, ref integer fd_rm, ref integer fd_om, ref axi_trans_t axi_trans[0:3]);
+    axi_trans_t axi_trans_ret0, axi_trans_ret1, axi_trans_ret2;    
+    if(fd_im != -1 && axi_trans[0].id == -1) begin
         $fscanf(fd_im, "%d,%d,%d,%d,%d\n", axi_trans[0].id, axi_trans[0].ts, axi_trans[0].op, axi_trans[0].addr, axi_trans[0].len);
+        axi_trans[0].dma_ref    = 0; 
+        axi_trans[0].fn         = "./memTrace_0_im.txt";
     end
-    if(!$feof(fd_pm) && axi_trans[1].id == -1) begin
+    if(fd_pm != -1 && axi_trans[1].id == -1) begin
         $fscanf(fd_pm, "%d,%d,%d,%d,%d\n", axi_trans[1].id, axi_trans[1].ts, axi_trans[1].op, axi_trans[1].addr, axi_trans[1].len);
+        axi_trans[1].dma_ref    = 1; 
+        axi_trans[1].fn         = "./memTrace_0_pm.txt.txt";
     end
-    if(!$feof(fd_rm) && axi_trans[2].id == -1) begin
+    if(fd_rm != -1 && axi_trans[2].id == -1) begin
         $fscanf(fd_rm, "%d,%d,%d,%d,%d\n", axi_trans[2].id, axi_trans[2].ts, axi_trans[2].op, axi_trans[2].addr, axi_trans[2].len);
+        axi_trans[2].dma_ref    = 2;
+        axi_trans[2].fn         = "./memTrace_0_rm.txt";
     end
-    if(!$feof(fd_om) && axi_trans[3].id == -1) begin
+    if(fd_om != -1 && axi_trans[3].id == -1) begin
         $fscanf(fd_om, "%d,%d,%d,%d,%d\n", axi_trans[3].id, axi_trans[3].ts, axi_trans[3].op, axi_trans[3].addr, axi_trans[3].len);
+        axi_trans[3].dma_ref    = 3;
+        axi_trans[3].fn         = "./memTrace_0_om.txt";
     end
     axi_trans_ret0 = findMin(0, axi_trans[0], 1, axi_trans[1]);
     axi_trans_ret1 = findMin(2, axi_trans[2], 3, axi_trans[3]);
@@ -532,34 +472,58 @@ function automatic getTrans(ref integer fd_im, ref integer fd_pm, ref integer fd
 endfunction: getTrans
 
 
+function automatic void postLoop(ref integer fd_im, ref integer fd_pm, ref integer fd_rm, ref integer fd_om);
+    if($feof(fd_im)) begin
+        $fclose(fd_im); 
+        fd_im = -1;
+    end
+    if($feof(fd_pm)) begin
+        $fclose(fd_pm); 
+        fd_pm = -1;
+    end
+    if($feof(fd_rm)) begin 
+        $fclose(fd_rm); 
+        fd_rm = -1;
+    end
+    if($feof(fd_om)) begin 
+        $fclose(fd_om); 
+        fd_om = -1;
+    end
+endfunction: postLoop
+
+
 task axi_drvr();
     integer fd_im, fd_pm, fd_rm, fd_om;
-    int time_delta;
-    int op;
-    time addr;
+    shortreal trans_no;
+    shortreal trans_tot;  
     shortreal onehnrd;
-    int len;
+    shortreal three1000;
     int prog_factor;
     int perct;
-    longint t_ofst;
-    longint time_delta;
-    
-    // 48336
-    // 261187
-    // 1444361
-    // 197828
-    axi_trans_t axi_trans[0:3];
-    axi_trans_t axi_trans_sel;
+    real t_ofst;
+    real time_delta;
+    logic clk;
+    // ./memTrace_0_im.txt 48336
+    // ./memTrace_0_om.txt 246657
+    // ./memTrace_0_pm.txt 1444361
+    // ./memTrace_0_rm.txt 197828
+    axi_trans_t axi_trans_arr[0:3];
+    axi_trans_t axi_trans;
     //---------------------------------------------------------------------------------------------
-    t_ofst = $time;
+    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
+
     fd_im = -1; fd_pm = -1; fd_rm = -1; fd_om = -1;
-    fd_im = $fopen(fn, "./memTrace_0_im.txt"); fd_pm = $fopen(fn, "./memTrace_0_pm.txt");
-    fd_rm = $fopen(fn, "./memTrace_0_rm.txt"); fd_om = $fopen(fn, "./memTrace_0_om.txt");
+    fd_im = $fopen("./memTrace_0_im.txt", "r"); fd_pm = $fopen("./memTrace_0_pm.txt", "r");
+    fd_rm = $fopen("./memTrace_0_rm.txt", "r"); fd_om = $fopen("./memTrace_0_om.txt", "r");
+    trans_no = 0;
+    trans_tot = 14937182;
     prog_factor = 10;
     onehnrd = 100.0;
+    three1000 = 3000.0;
     
-    null_axi_trans(axi_trans[0]); null_axi_trans(axi_trans[1]);
-    null_axi_trans(axi_trans[2]); null_axi_trans(axi_trans[3]);
+    null_axi_trans(axi_trans_arr[0]); null_axi_trans(axi_trans_arr[1]);
+    null_axi_trans(axi_trans_arr[2]); null_axi_trans(axi_trans_arr[3]);
+    `TOP.trans_in_prog = 0;
 
     forever begin
         @(posedge clk);
@@ -567,32 +531,31 @@ task axi_drvr();
             break;
         end
     end
+    t_ofst = real'($time);
     
-    while(fd_im != -1 && fd_pm != -1 && fd_rm != -1 && fd_om != -1) begin 
-        axi_trans_sel = getTrans(axi_trans);
-        t_ofst
-        time_delta = axi_trans.ts - ($time - t_ofst);
-        time_delta = 0; // DEBUG
+    while(fd_im != -1 && fd_pm != -1 && fd_rm != -1 && fd_om != -1) begin
+        @(posedge clk);
+        axi_trans = getTrans(fd_im, fd_pm, fd_rm, fd_om, axi_trans_arr);
+        time_delta = $floor((axi_trans.ts - ($time - t_ofst)) / three1000);
+        time_delta = 0;
         repeat(time_delta) @(posedge clk);        
-        if(axi_trans_sel.op == 0) begin // READ
-            axi_schd_rd(axi_trans_sel);
+        if(axi_trans.op == 0) begin // READ
+            axi_schd_rd(axi_trans);
         end else begin // WRITE
-            axi_schd_wr(axi_trans_sel);
+            axi_schd_wr(axi_trans);
         end
-        if($feof(fd_im)) $fclose(fd_im); fd_im = -1;
-        if($feof(fd_pm)) $fclose(fd_pm); fd_pm = -1;
-        if($feof(fd_rm)) $fclose(fd_rm); fd_rm = -1;
-        if($feof(fd_om)) $fclose(fd_om); fd_om = -1;      
+        postLoop(fd_im, fd_pm, fd_rm, fd_om);
         perct = $floor((trans_no / trans_tot) * onehnrd);
         if(perct >= prog_factor && perct > 0) begin
             prog_factor = prog_factor + 10;
             $display("finished %d / %d transactions", trans_no, trans_tot);
         end
+        trans_no = trans_no + 1;
     end
 endtask: axi_drvr
 
 
-function automatic null_axi_trans(ref axi_trans_t axi_trans);
+function automatic void null_axi_trans(ref axi_trans_t axi_trans);
     axi_trans.id = -1;
     axi_trans.fn = "";
     axi_trans.dma_ref = -1;
@@ -604,48 +567,50 @@ endfunction: null_axi_trans
 
 
 task axi_schd_rd(axi_trans_t axi_trans);
-    logic clk;
-    logic axi_arready;    
-    //---------------------------------------------------------------------------------------------
-    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
-    assign axi_arready = sim_tb_top.u_example_top.c0_ddr4_s_axi_arready;    
     forever begin
-        @(posedge clk);
-        if(axi_arready == 1) begin
+        @(posedge `AXI_INTF.c0_ddr4_clk);
+        if(`AXI_INTF.c0_ddr4_s_axi_arready && !`TOP.trans_in_prog[axi_trans.dma_ref]) begin
             break;
         end
     end
-    @(posedge clk);
-    axi_arvalid <= 1;
-    axi_araddr  <= axi_trans.addr;
-    axi_arlen   <= axi_trans.len; 
-    $display("[AXI_READ STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.trans_no);
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_arvalid = 1;
+    `AXI_INTF.c0_ddr4_s_axi_arid    = axi_trans.dma_ref;
+    `AXI_INTF.c0_ddr4_s_axi_araddr  = axi_trans.addr;
+    `AXI_INTF.c0_ddr4_s_axi_arlen   = axi_trans.len; 
+    $display("[AXI_READ STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
     $display("\taddress: %d", axi_trans.addr);
     $display("\tlength:  %d", axi_trans.len);
-    axi_arvalid <= 0;
-    axi_araddr  <= 0;
-    axi_arlen   <= 0;    
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_arvalid = 0;    
+    `AXI_INTF.c0_ddr4_s_axi_arid    = 0;
+    `AXI_INTF.c0_ddr4_s_axi_araddr  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_arlen   = 0;    
     fork
-        axi_wait_rd_cmpl(id, fn);
+        axi_wait_rd_cmpl(axi_trans);
     join_none    
 endtask: axi_schd_rd
 
 
 task axi_schd_wr(axi_trans_t axi_trans);
-    logic clk;
-    logic axi_awready;    
-    //---------------------------------------------------------------------------------------------
-    assign clk = sim_tb_top.u_example_top.c0_ddr4_clk;
-    assign axi_awready = sim_tb_top.u_example_top.c0_ddr4_s_axi_awready;    
     forever begin
-        @(posedge clk);
-        if(axi_awready == 1) begin
+        @(posedge `AXI_INTF.c0_ddr4_clk);
+        if(`AXI_INTF.c0_ddr4_s_axi_awready && !`TOP.trans_in_prog[axi_trans.dma_ref]) begin
             break;
         end
     end
-    $display("[AXI WRITE STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.trans_no);
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_awid    = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awvalid = 1;
+    `AXI_INTF.c0_ddr4_s_axi_awaddr  = axi_trans.addr;
+    `AXI_INTF.c0_ddr4_s_axi_awlen   = axi_trans.len; 
+    $display("[AXI WRITE STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
     $display("\taddress: %d", axi_trans.addr);
-    $display("\tlength: %d", axi_trans.len);    
+    $display("\tlength: %d", axi_trans.len); 
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_awvalid = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awaddr  = 0;
+    `AXI_INTF.c0_ddr4_s_axi_awlen   = 0;       
     fork
         axi_wait_wr_cmpl(axi_trans);
     join_none
@@ -653,48 +618,61 @@ endtask: axi_schd_wr
 
 
 task axi_wait_rd_cmpl(axi_trans_t axi_trans);
-    logic clk;
-    logic axi_rlast_d;
-    logic axi_rid;
-    //---------------------------------------------------------------------------------------------
-    trans_in_prog[axi_trans.dma_ref] = 1;
-    assign clk          = sim_tb_top.u_example_top.c0_ddr4_clk;
-    assign axi_rlast_d  = sim_tb_top.u_example_top.axi_rlast_d;
-    assign axi_rid      = sim_tb_top.u_example_top.c0_ddr4_s_axi_rid;
+    int i;
+    i = 0;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.axi_rready[axi_trans.dma_ref]  = 1;  
+    `TOP.trans_in_prog[axi_trans.dma_ref] = 1;
+    while(i < axi_trans.len)  begin
+        @(posedge `AXI_INTF.c0_ddr4_clk); 
+        if(`AXI_INTF.c0_ddr4_s_axi_rvalid && `AXI_INTF.c0_ddr4_s_axi_rid == axi_trans.dma_ref) begin
+            i = i + 1;
+        end
+    end
     forever begin
-        @(posedge clk);
-        if(axi_rlast_d && axi_trans.id == axi_rid) begin
-            $display("[AXI READ FINISHED]: %s Transaction No. %d", fn, trans_no);
+        @(posedge `AXI_INTF.c0_ddr4_clk);
+        if(`AXI_INTF.c0_ddr4_s_axi_rlast && `AXI_INTF.c0_ddr4_s_axi_rid == axi_trans.dma_ref) begin
+            $display("[AXI READ FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
             break;
         end
     end
-    trans_in_prog[axi_trans.dma_ref] = 0;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.axi_rready[axi_trans.dma_ref]  = 0; 
+    `TOP.trans_in_prog[axi_trans.dma_ref] = 0;
 endtask: axi_wait_rd_cmpl
 
 
 task axi_wait_wr_cmpl(axi_trans_t axi_trans);
-    logic clk;
-    logic axi_wlast;
+    int i;
     //---------------------------------------------------------------------------------------------
-    trans_in_prog[axi_trans.dma_ref] = 1;
-    assign clk          = sim_tb_top.u_example_top.c0_ddr4_clk;
-    assign axi_wlast    = sim_tb_top.u_example_top.c0_ddr4_s_axi_wlast;
-    assign axi_bvalid   = sim_tb_top.u_example_top.c0_ddr4_s_axi_bvalid;
-    forever begin
-        @(posedge clk); 
-        if(i == (axi_trans.len - 1)) begin
-            axi_wlast = 1;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_wvalid  = 1;  
+    `TOP.trans_in_prog[axi_trans.dma_ref] = 1;
+    i = 0;
+    while(i < axi_trans.len)  begin
+        @(posedge `AXI_INTF.c0_ddr4_clk);
+        if(`AXI_INTF.c0_ddr4_s_axi_wvalid && `AXI_INTF.c0_ddr4_s_axi_wready) begin
+            i = i + 1;
         end
-        i = i + 1;
+        if(i == (axi_trans.len - 1)) begin
+            
+        end
     end
-    axi_wlast = 0;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_wlast = 1;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_wlast  = 0;    
+    `AXI_INTF.c0_ddr4_s_axi_wvalid = 0;
+    @(posedge `AXI_INTF.c0_ddr4_clk);
+    `AXI_INTF.c0_ddr4_s_axi_bready = 1;
     forever begin
-        @(posedge clk);   
-        if(axi_bvalid) begin
+        @(posedge `AXI_INTF.c0_ddr4_clk);   
+        if(`AXI_INTF.c0_ddr4_s_axi_bvalid) begin
             $display("[AXI WRITE FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
             break;
         end
     end
-    trans_in_prog[axi_trans.dma_ref] = 0;
+    `AXI_INTF.c0_ddr4_s_axi_bready = 0;
+    `TOP.trans_in_prog[axi_trans.dma_ref] = 0;
 endtask: axi_wait_wr_cmpl
 
