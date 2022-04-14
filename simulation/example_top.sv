@@ -95,7 +95,7 @@ typedef struct {
     int dma_ref;
     time addr;
     time len;
-    int minIdx;
+    int minIdx; 
 } axi_trans_t;
 
 
