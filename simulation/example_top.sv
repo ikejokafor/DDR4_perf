@@ -522,8 +522,10 @@ task axi_drvr();
     axi_trans_t axi_trans;
     //---------------------------------------------------------------------------------------------
     fd_im = -1; fd_pm = -1; fd_rm = -1; fd_om = -1;
-    fd_im = $fopen("./memTrace_0_im.txt", "r"); fd_pm = $fopen("./memTrace_0_pm.txt", "r");
-    fd_rm = $fopen("./memTrace_0_rm.txt", "r"); fd_om = $fopen("./memTrace_0_om.txt", "r");
+    fd_im = $fopen("./memTrace_0_im.txt", "r"); 
+    // fd_pm = $fopen("./memTrace_0_pm.txt", "r");
+    // fd_rm = $fopen("./memTrace_0_rm.txt", "r"); 
+    // fd_om = $fopen("./memTrace_0_om.txt", "r");
     trans_no = 0;
     trans_tot = 14937182;
     prog_factor = 10;
@@ -551,7 +553,10 @@ task axi_drvr();
     while(fd_im != -1 && fd_pm != -1 && fd_rm != -1 && fd_om != -1) begin
         @(posedge `TOP.c0_ddr4_clk);
         axi_trans = getTrans(fd_im, fd_pm, fd_rm, fd_om, axi_trans_arr);
-        time_delta = axi_trans.ts - $floor((real'($time) - t_ofst) / three1000);
+        // time_delta = axi_trans.ts - $floor((real'($time) - t_ofst) / three1000);
+        // DEBUG;
+        time_delta = 0;
+        // DEBUG;
         repeat(time_delta) @(posedge `TOP.c0_ddr4_clk);        
         if(axi_trans.op == 0) begin // READ
             axi_schd_rd(axi_trans);
@@ -600,9 +605,9 @@ task axi_schd_rd(axi_trans_t axi_trans);
     `AXI_INTF.c0_ddr4_s_axi_arid    = axi_trans.dma_ref;
     `AXI_INTF.c0_ddr4_s_axi_araddr  = axi_trans.addr;
     `AXI_INTF.c0_ddr4_s_axi_arlen   = axi_trans.len; 
-    $display("[AXI_READ STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
-    $display("\taddress: %d", axi_trans.addr);
-    $display("\tlength:  %d", axi_trans.len);
+    // $display("[AXI_READ STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
+    // $display("\taddress: %d", axi_trans.addr);
+    // $display("\tlength:  %d", axi_trans.len);
     @(posedge `AXI_INTF.c0_ddr4_clk);
     `AXI_INTF.c0_ddr4_s_axi_arvalid = 0;    
     `AXI_INTF.c0_ddr4_s_axi_arid    = 0;
@@ -626,9 +631,9 @@ task axi_schd_wr(axi_trans_t axi_trans);
     `AXI_INTF.c0_ddr4_s_axi_awvalid = 1;
     `AXI_INTF.c0_ddr4_s_axi_awaddr  = axi_trans.addr;
     `AXI_INTF.c0_ddr4_s_axi_awlen   = axi_trans.len; 
-    $display("[AXI WRITE STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
-    $display("\taddress: %d", axi_trans.addr);
-    $display("\tlength: %d", axi_trans.len); 
+    // $display("[AXI WRITE STARTED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
+    // $display("\taddress: %d", axi_trans.addr);
+    // $display("\tlength: %d", axi_trans.len); 
     @(posedge `AXI_INTF.c0_ddr4_clk);
     `AXI_INTF.c0_ddr4_s_axi_awvalid = 0;
     `AXI_INTF.c0_ddr4_s_axi_awaddr  = 0;
@@ -654,7 +659,7 @@ task axi_wait_rd_cmpl(axi_trans_t axi_trans);
     forever begin
         @(posedge `AXI_INTF.c0_ddr4_clk);
         if(`AXI_INTF.c0_ddr4_s_axi_rlast && `AXI_INTF.c0_ddr4_s_axi_rid == axi_trans.dma_ref) begin
-            $display("[AXI READ FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
+            // $display("[AXI READ FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
             break;
         end
     end
@@ -688,7 +693,7 @@ task axi_wait_wr_cmpl(axi_trans_t axi_trans);
     forever begin
         @(posedge `AXI_INTF.c0_ddr4_clk);   
         if(`AXI_INTF.c0_ddr4_s_axi_bvalid) begin
-            $display("[AXI WRITE FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
+            // $display("[AXI WRITE FINISHED]: %s Transaction No. %d", axi_trans.fn, axi_trans.id);
             break;
         end
     end
