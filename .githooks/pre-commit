@@ -1,0 +1,6 @@
+#!/bin/sh
+
+git add -f hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4/ddr4.xci
+git add -f hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/
+git add -f hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ip_user_files/
+git add -f hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/managed_ip_project/
