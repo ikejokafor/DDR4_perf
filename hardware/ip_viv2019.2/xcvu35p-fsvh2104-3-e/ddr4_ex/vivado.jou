@@ -1,0 +1,16 @@
+#-----------------------------------------------------------
+# Vivado v2019.2 (64-bit)
+# SW Build 2708876 on Wed Nov  6 21:39:14 MST 2019
+# IP Build 2700528 on Thu Nov  7 00:09:20 MST 2019
+# Start of session at: Mon Nov  8 11:46:59 2021
+# Process ID: 69610
+# Current directory: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex
+# Command line: vivado -notrace -source /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4/ddr4_ex.tcl
+# Log file: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/vivado.log
+# Journal file: /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/vivado.jou
+#-----------------------------------------------------------
+start_gui
+source /home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4/ddr4_ex.tcl -notrace
+update_compile_order -fileset sources_1
+export_ip_user_files -no_script -force
+export_simulation  -lib_map_path "/home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/ddr4_ex.cache/compile_simlib/questa" -absolute_path -force -directory "/home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex" -simulator questa  -ip_user_files_dir "/home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/ddr4_ex.ip_user_files" -ipstatic_source_dir "/home/mdl/izo5011/IkennaWorkSpace/DDR4_perf/hardware/ip_viv2019.2/xcvu35p-fsvh2104-3-e/ddr4_ex/ddr4_ex.ip_user_files/ipstatic" -use_ip_compiled_libs
